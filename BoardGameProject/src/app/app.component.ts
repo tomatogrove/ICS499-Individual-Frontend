@@ -6,5 +6,14 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'BoardGameProject';
+  public title = 'BoardGameProject';
+  public signedIn: boolean = false;
+
+  public visitGames(): void{
+
+  }
+
+  public visitMyGames(): void{
+
+  }
 }

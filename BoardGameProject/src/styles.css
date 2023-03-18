@@ -1,1 +1,23 @@
-/* You can add global styles to this file, and also import other style files */
+.button {
+    width: fit-content;
+    height: 2.5rem;
+    background-color: #8354b9;
+    border: none;
+    text-align: center;
+    display: inline-block;
+    border-radius: 8%;
+    margin: .5rem;
+    cursor: pointer;
+}
+
+.button-text {
+    color: #ffffff;
+    font-size: larger;
+    padding: 0 .75rem 0 .75rem;
+}
+
+.header {
+    font-family: sans-serif;
+    color: #331753;
+}
+

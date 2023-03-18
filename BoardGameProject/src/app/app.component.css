@@ -1,0 +1,52 @@
+body {
+    margin-top: 60px;
+    padding: 30px;
+    font-family: sans-serif;
+}
+
+main {
+    color: #8354b9;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-color: #a6a7ce;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 0 .75rem 0 #3a3a64;
+}
+
+header * {
+    display: inline;
+}
+
+.navigation-button {
+    width: fit-content;
+    height: 2.5rem;
+    background-color: #8354b9;
+    border: none;
+    text-align: center;
+    display: inline-block;
+    border-radius: 8%;
+    margin: .5rem;
+    cursor: pointer;
+}
+
+.navigation-button-text {
+    color: #ebebf5;
+    font-size: larger;
+    padding: 0 .75rem 0 .75rem;
+}
+
+.align-right {
+    float: right;
+} 
+
+nav {
+    width: 100%;
+    margin: 0 1rem;
+}

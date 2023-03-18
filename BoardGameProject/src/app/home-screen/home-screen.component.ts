@@ -7,4 +7,13 @@ import { Component } from '@angular/core';
 })
 export class HomeScreenComponent {
 
+  title: string = "Welcome to Board Games Online!"
+
+  public selectChess(): void {
+
+  }
+
+  public selectUno(): void {
+
+  }
 }
