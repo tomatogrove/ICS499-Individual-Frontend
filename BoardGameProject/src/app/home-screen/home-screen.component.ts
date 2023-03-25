@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { SignInService } from '../services/sign-in/sign-in.service';
 
 @Component({
   selector: 'app-home-screen',
@@ -7,13 +9,15 @@ import { Component } from '@angular/core';
 })
 export class HomeScreenComponent {
 
-  title: string = "Welcome to Board Games Online!"
+  public showSignInModal: boolean = false;
+
+  constructor(public signInService: SignInService, private router: Router) { }
 
   public selectChess(): void {
-
-  }
-
-  public selectUno(): void {
-
+    if (!this.signInService.signedIn) {
+      this.showSignInModal = true;
+    } else {
+      this.router.navigate(['game-setup']);
+    }
   }
 }

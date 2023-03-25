@@ -1,3 +1,4 @@
+@import "node_modules/bootstrap";
 .button {
     width: fit-content;
     height: 2.5rem;
