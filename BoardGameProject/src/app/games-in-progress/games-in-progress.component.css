@@ -1,0 +1,27 @@
+.flex {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.grid {
+    margin: 2rem;
+    display: grid;
+    font-size: 1.5rem;
+    grid-template-columns: 6fr 6fr 13fr 8fr;
+    background-color: #e4d7f1;
+}
+
+.table {
+    margin-top: 4rem;
+    color: #36105a
+}
+
+.danger {
+    background-color: #c56161;
+}
+
+td {
+    text-align: center;
+    vertical-align: middle;
+}

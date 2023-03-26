@@ -1,1 +1,14 @@
-<p>chess-board works!</p>
+<div class="table-border">
+    <table class="fixed">
+        <tbody>
+            <ng-container *ngFor="let row of spaces">
+                <tr>
+                    <ng-container *ngFor="let space of row">
+                        <td [ngClass]="(space.x - space.y) % 2 !== 0 ? 'black-square' : 'white-square'"></td>
+                    </ng-container>
+                </tr>
+            </ng-container>
+        </tbody>
+    </table>
+</div>
+

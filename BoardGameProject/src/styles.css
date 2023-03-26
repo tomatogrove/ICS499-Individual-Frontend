@@ -6,7 +6,7 @@
     border: none;
     text-align: center;
     display: inline-block;
-    border-radius: 8%;
+    border-radius: 5px;
     margin: .5rem;
     cursor: pointer;
 }
@@ -22,3 +22,22 @@
     color: #331753;
 }
 
+.flex {
+    display: flex;
+    margin: auto;
+    align-items: center;
+    justify-content: center;
+}
+
+.links {
+    color: #561a9c;
+}
+
+.links:hover {
+    color: #371063;
+    cursor: pointer;
+}
+
+.space-above {
+    margin-top: 3.5rem;
+}

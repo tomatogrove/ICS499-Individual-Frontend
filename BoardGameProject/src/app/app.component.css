@@ -32,7 +32,7 @@ header * {
     border: none;
     text-align: center;
     display: inline-block;
-    border-radius: 8%;
+    border-radius: 5px;
     margin: .5rem;
     cursor: pointer;
 }

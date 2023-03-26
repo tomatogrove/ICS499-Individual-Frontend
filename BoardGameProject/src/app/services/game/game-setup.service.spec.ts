@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ModalHandlerService } from './modal-handler.service';
+import { GameSetupService } from './game-setup.service';
 
-describe('ModalHandlerService', () => {
-  let service: ModalHandlerService;
+describe('GameSetupService', () => {
+  let service: GameSetupService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(ModalHandlerService);
+    service = TestBed.inject(GameSetupService);
   });
 
   it('should be created', () => {

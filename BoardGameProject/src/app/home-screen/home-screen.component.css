@@ -23,11 +23,7 @@
     width: 40%;
 }
 
-.flex {
-    display: flex;
-    margin: auto;
-    align-items: center;
-    justify-content: center;
+.space-above {
     margin-top: 3.5rem;
 }
 

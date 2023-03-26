@@ -1,1 +1,30 @@
-<p>chess-in-play works!</p>
+<div class="flex mt-3">
+    <app-chess-board></app-chess-board>
+    <div class="info-box">
+        <div class="card text-box scroll">
+            <ng-container *ngFor="let text of textHistory">
+                <label class="log">{{text}}</label>
+            </ng-container>
+        </div>
+        <div class="pieces">
+            <h3>Current Turn: </h3>
+            <div *ngIf="currentTurn !== 'Player 1' && currentTurn !== 'Player 2'" class="card smaller-card smaller-card-no-player">
+                <img class="card-img-top" src="../../assets/images/nopiece.png" alt="Empty Chess Piece">
+                <div>...</div>
+            </div>
+            <div *ngIf="currentTurn === 'Player 1'" class="card white-piece smaller-card">
+                <img class="card-img-top" src="../../assets/images/whitepiece.png" alt="White Chess Piece">
+                <div>{{player1}}</div>
+            </div>
+            <div *ngIf="currentTurn === 'Player 2'" class="card black-piece smaller-card">
+                <img class="card-img-top" src="../../assets/images/blackpiece.png" alt="Black Chess Piece">
+                <div>{{player2}}</div>
+            </div>
+        </div>
+        <div class="navigation-options">
+            <button class="button button-text" (click)="pauseMatch()">Pause Match</button>
+            <button class="button button-text" (click)="endTurn()">End Turn</button>
+            <button class="button button-text danger" (click)="forfit()">Forfit</button>
+        </div>
+    </div>
+</div>

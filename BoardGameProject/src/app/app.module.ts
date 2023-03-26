@@ -9,8 +9,8 @@ import { ChessInPlayComponent } from './chess-in-play/chess-in-play.component';
 import { StatsComponent } from './stats/stats.component';
 import { GamesInProgressComponent } from './games-in-progress/games-in-progress.component';
 import { ChessBoardComponent } from './chess-board/chess-board.component';
-import { SignInModalComponent } from './sign-in-modal/sign-in-modal.component';
-import { SignUpModalComponent } from './sign-up-modal/sign-up-modal.component';
+import { SignInModalComponent } from './modals/sign-in-modal/sign-in-modal.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -21,10 +21,10 @@ import { SignUpModalComponent } from './sign-up-modal/sign-up-modal.component';
     StatsComponent,
     GamesInProgressComponent,
     ChessBoardComponent,
-    SignInModalComponent,
-    SignUpModalComponent
+    SignInModalComponent
   ],
   imports: [
+    FormsModule,
     BrowserModule,
     AppRoutingModule
   ],

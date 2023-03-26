@@ -11,7 +11,7 @@ const routes: Routes = [
   { path: 'game-setup', component: GameSetupComponent },
   { path: 'game-in-play', component: ChessInPlayComponent },
   { path: 'my-games', component: GamesInProgressComponent },
-  { path: 'my-path', component: StatsComponent },
+  { path: 'my-stats', component: StatsComponent },
   { path: '',   redirectTo: '/home', pathMatch: 'full' }
 ];
 
