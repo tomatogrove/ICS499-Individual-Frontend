@@ -1,0 +1,17 @@
+.flex {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+td {
+    text-align: left;
+    vertical-align: middle;
+}
+
+.table {
+    margin-top: 6rem;
+    color: #36105a;
+    max-width: 40%;
+    font-size: 1.5rem;
+}

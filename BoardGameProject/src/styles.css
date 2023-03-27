@@ -1,1 +1,43 @@
-/* You can add global styles to this file, and also import other style files */
+@import "node_modules/bootstrap";
+.button {
+    width: fit-content;
+    height: 2.5rem;
+    background-color: #8354b9;
+    border: none;
+    text-align: center;
+    display: inline-block;
+    border-radius: 5px;
+    margin: .5rem;
+    cursor: pointer;
+}
+
+.button-text {
+    color: #ffffff;
+    font-size: larger;
+    padding: 0 .75rem 0 .75rem;
+}
+
+.header {
+    font-family: sans-serif;
+    color: #331753;
+}
+
+.flex {
+    display: flex;
+    margin: auto;
+    align-items: center;
+    justify-content: center;
+}
+
+.links {
+    color: #561a9c;
+}
+
+.links:hover {
+    color: #371063;
+    cursor: pointer;
+}
+
+.space-above {
+    margin-top: 3.5rem;
+}

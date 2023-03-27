@@ -1,0 +1,33 @@
+.home-screen-title {
+    width: 90%;
+    font-size: 5.21vw;
+    word-break: break-word;
+}
+
+.home-screen-subtitle {
+    padding-left: .5rem;
+    padding-top: .5rem;
+    width: 90%;
+    font-size: 2rem;
+    word-break: break-word;
+    font-family: sans-serif;
+    color: #635276;
+}
+
+.home-screen-subtitle-smaller {
+    font-size: 1rem;
+    color: #776e81;
+}
+
+.home-screen-title-blocks {
+    width: 40%;
+}
+
+.space-above {
+    margin-top: 3.5rem;
+}
+
+.img-background {
+    background-color: beige;
+    padding: 1rem .5rem;
+}

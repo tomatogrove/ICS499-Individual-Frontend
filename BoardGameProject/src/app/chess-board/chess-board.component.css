@@ -1,0 +1,27 @@
+td {
+    width: 4rem;
+    height: 4rem;
+}
+
+table.fixed { 
+    table-layout:fixed; 
+}
+
+table.fixed td { 
+    overflow: hidden; 
+}
+
+.table-border {
+    background-color:  #d4bae4;
+    padding: 2rem;
+    width: calc(4rem * 9);
+    border-radius: 5%;
+}
+
+.black-square {
+    background-color: #58187c;
+}
+
+.white-square {
+    background-color: bisque;
+}
