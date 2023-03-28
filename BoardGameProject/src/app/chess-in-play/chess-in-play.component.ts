@@ -29,7 +29,7 @@ export class ChessInPlayComponent {
     [this.player1, this.player2] = this.gameSetupService.getPlayers()
 
     this.gameSetupService.emitMockGameData().subscribe((text) => {
-      if (text === "userExample starts") {
+      if (text === "exampleUser starts") {
         this.currentTurn = "Player 1";
       }
       this.textHistory.push(text)

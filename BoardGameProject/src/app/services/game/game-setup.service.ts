@@ -15,9 +15,9 @@ export class GameSetupService {
   ];
 
   public tempGameLog: string[] = [
-    "Game Opened for userExample as Player 1 and guest123 as Player 2",
+    "Game Opened for exampleUser as Player 1 and guest123 as Player 2",
     "...",
-    "userExample starts",
+    "exampleUser starts",
     "..."
   ]
 

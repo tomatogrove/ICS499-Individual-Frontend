@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-chess-board',
@@ -6,6 +6,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./chess-board.component.css']
 })
 export class ChessBoardComponent {
+
+  @Input()
+  public realGame: boolean = false;
 
   public spaces: Space[][] = [];
 
@@ -15,7 +18,13 @@ export class ChessBoardComponent {
       this.spaces.push([]);
       for (let j = 1; j < 9; j++) {
         id++;
-        this.spaces[i - 1].push(new Space(id, j, i));
+        if (this.realGame && (i === 1 || i === 2 || i ===7|| i === 8)) {
+          let space: Space = new Space(id, j, i);
+          let piece: Piece = Piece.createPiece(j, i, space);
+          this.spaces[i - 1].push(new Space(id, j, i, piece));
+        } else {
+          this.spaces[i - 1].push(new Space(id, j, i));
+        }
       }
     }
   }
@@ -28,7 +37,7 @@ export class Space {
   public y: number;
   public piece?: Piece;
 
-  constructor( spaceID: number, x: number, y: number, piece?: Piece) {
+  constructor(spaceID: number, x: number, y: number, piece?: Piece) {
     this.spaceID = spaceID;
     this.x = x;
     this.y = y;
@@ -36,12 +45,24 @@ export class Space {
   }
 }
 
-export interface Piece {
+export class Piece {
   pieceID: number;
   type: Type;
   color: Color;
   hasMoved: boolean;
   space: Space;
+  
+  constructor(pieceID: number, type: Type, color: Color, hasMoved: boolean, space: Space) {
+    this.pieceID = pieceID;
+    this.type = type;
+    this.color = color;
+    this.hasMoved = hasMoved; 
+    this.space = space; 
+  }
+
+  static createPiece(x: number, y: number, space: any): any {
+    
+  }
 }
 
 export enum Type {
