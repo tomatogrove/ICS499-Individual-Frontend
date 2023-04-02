@@ -4,7 +4,19 @@
             <ng-container *ngFor="let row of spaces">
                 <tr>
                     <ng-container *ngFor="let space of row">
-                        <td [ngClass]="(space.x - space.y) % 2 !== 0 ? 'black-square' : 'white-square'"></td>
+                        <td 
+                            [ngClass]="(space.x - space.y) % 2 === 0 
+                                    ? (space.possibleMove ? 'bs-possible' : 'black-square')
+                                    : (space.possibleMove ? 'ws-possible' : 'white-square')">
+                            <button 
+                                *ngIf="realGame && space.piece" 
+                                class="piece-button"
+                                (click)="showPossibleMoves(space)"
+                                >
+                                {{space.x}},{{space.y}}
+                                <img class="piece" src="../../assets/images/pieces/{{space.piece.getColorName()}}-{{space.piece.getTypeName()}}.png"/>
+                            </button>
+                        </td>
                     </ng-container>
                 </tr>
             </ng-container>

@@ -1,4 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { Piece } from '../models/piece';
+import { Space } from '../models/space';
 
 @Component({
   selector: 'app-chess-board',
@@ -12,69 +14,46 @@ export class ChessBoardComponent {
 
   public spaces: Space[][] = [];
 
+  public possibleMoves: Space[] = [];
+
   ngOnInit() {
     let id = 0;
-    for (let i = 1; i < 9; i++) {
+
+    for (let i = 0; i < 8; i++) {
       this.spaces.push([]);
+    }
+
+    for (let i = 8; i > 0; i--) {
       for (let j = 1; j < 9; j++) {
         id++;
-        if (this.realGame && (i === 1 || i === 2 || i ===7|| i === 8)) {
-          let space: Space = new Space(id, j, i);
-          let piece: Piece = Piece.createPiece(j, i, space);
-          this.spaces[i - 1].push(new Space(id, j, i, piece));
+        if (this.realGame && (i === 1 || i === 2 || i ===7 || i === 8)) {
+          let space: Space = new Space(id, j, i, this);
+          let piece: Piece = Piece.createPiece(j, i, space, this);
+          this.spaces[8 - i].push(new Space(id, j, i, this, piece));
         } else {
-          this.spaces[i - 1].push(new Space(id, j, i));
+          this.spaces[8 - i].push(new Space(id, j, i, this));
         }
       }
     }
   }
 
-}
-
-export class Space {
-  public spaceID: number;
-  public x: number;
-  public y: number;
-  public piece?: Piece;
-
-  constructor(spaceID: number, x: number, y: number, piece?: Piece) {
-    this.spaceID = spaceID;
-    this.x = x;
-    this.y = y;
-    this.piece = piece; 
-  }
-}
-
-export class Piece {
-  pieceID: number;
-  type: Type;
-  color: Color;
-  hasMoved: boolean;
-  space: Space;
-  
-  constructor(pieceID: number, type: Type, color: Color, hasMoved: boolean, space: Space) {
-    this.pieceID = pieceID;
-    this.type = type;
-    this.color = color;
-    this.hasMoved = hasMoved; 
-    this.space = space; 
+  public showPossibleMoves(space: Space) {
+    if (space.piece) {
+      space.piece.isSelected = !space.piece?.isSelected;
+      if (space.piece.isSelected) {
+        this.possibleMoves = space.piece.getPossibleMoves();
+      } else {
+        this.possibleMoves.forEach((space) => space.possibleMove = false)
+        this.possibleMoves = [];
+      }
+    }
   }
 
-  static createPiece(x: number, y: number, space: any): any {
-    
+  public getSpace(x: number, y: number): Space | undefined {
+    let space: Space | undefined = undefined;
+
+    space = this.spaces[y - 1].find((space) => space.x === x);
+
+    return space;
   }
-}
-
-export enum Type {
-  PAWN,
-  BISHOP,
-  ROOK,
-  KNIGHT,
-  KING,
-  QUEEN
-}
-
-export enum Color {
-  BLACK,
-  WHITE
 }
