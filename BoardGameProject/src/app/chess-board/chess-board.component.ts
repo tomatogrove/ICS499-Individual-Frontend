@@ -1,4 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { Board } from '../models/board';
+import { Piece } from '../models/piece';
+import { Space } from '../models/space';
+import { GameInPlayService } from '../services/game/game-in-play.service';
+import { GameSetupService } from '../services/game/game-setup.service';
 
 @Component({
   selector: 'app-chess-board',
@@ -7,53 +12,86 @@ import { Component } from '@angular/core';
 })
 export class ChessBoardComponent {
 
-  public spaces: Space[][] = [];
+  @Input()
+  public realGame: boolean = false;
+
+  public spaces: Space[][] = [[], [], [], [], [], [], [], []];
+  public pieces: Piece[] = [];
+  public board: Board = new Board();
+
+  public loading = true;
+
+  constructor(
+    private gameSetupService: GameSetupService,
+    private gameInPlayService: GameInPlayService
+    ) {}
 
   ngOnInit() {
-    let id = 0;
-    for (let i = 1; i < 9; i++) {
-      this.spaces.push([]);
-      for (let j = 1; j < 9; j++) {
-        id++;
-        this.spaces[i - 1].push(new Space(id, j, i));
+
+    this.gameSetupService.getBoardByID(2).subscribe((board: Board) => {
+      this.board = board;
+
+      this.board.spaces?.forEach((space) => this.spaces[space.y - 1].push(space));
+      this.spaces.forEach((column) => column.sort((a, b) => a.x - b.x));
+      this.spaces.sort((a, b) => b[0].y - a[0].y);
+
+      if (this.board.pieces) {
+        this.pieces = this.board.pieces;
       }
+
+      this.loading = false;
+    }) 
+  }
+
+  public showPossibleMoves(space: Space) {
+    this.spaces.forEach((row) => row.forEach((space) => space.possibleMove = false));
+    
+    if(this.getSelectedPiece() !== space.piece){
+      this.gameInPlayService.getPossibleMoves(space.piece.pieceID).subscribe((possibleMoves) => {
+        if(!possibleMoves) { return; }
+        possibleMoves.forEach((move) => this.spaces[8 - move.y][move.x - 1].possibleMove = true);
+        space.piece.selected = true;
+      });
+    }else{
+      this.getSelectedPiece().selected = false;
     }
   }
 
-}
+  public movePiece(space: Space) {
+    let selectedPiece: Piece = this.getSelectedPiece();
+    this.gameInPlayService.movePiece(selectedPiece.pieceID, space.x, space.y).subscribe(piece => {
+      this.spaces.forEach(row => {
+        let space: Space = row.find(e => e.piece?.pieceID === selectedPiece.pieceID);
+        if(space){
+          space.piece = null;
+          return;
+        }
+      });
 
-export class Space {
-  public spaceID: number;
-  public x: number;
-  public y: number;
-  public piece?: Piece;
+      this.spaces[8 - space.y][space.x - 1].piece = piece;
 
-  constructor( spaceID: number, x: number, y: number, piece?: Piece) {
-    this.spaceID = spaceID;
-    this.x = x;
-    this.y = y;
-    this.piece = piece; 
+      this.spaces.forEach((row) => row.forEach((space) => space.possibleMove = false));
+      selectedPiece.selected = false;
+    });
   }
-}
 
-export interface Piece {
-  pieceID: number;
-  type: Type;
-  color: Color;
-  hasMoved: boolean;
-  space: Space;
-}
+  public getSpace(x: number, y: number): Space | undefined {
+    let space: Space | undefined = undefined;
 
-export enum Type {
-  PAWN,
-  BISHOP,
-  ROOK,
-  KNIGHT,
-  KING,
-  QUEEN
-}
+    space = this.spaces[y - 1].find((space) => space.x === x);
 
-export enum Color {
-  BLACK,
-  WHITE
+    return space;
+  }
+
+  private getSelectedPiece(): Piece {
+    for (let row of this.spaces) {
+      for (let column of row) {
+        if(column.piece?.selected){
+          return column.piece;
+        }
+      }
+    }
+
+    return null;
+  }
 }

@@ -1,5 +1,7 @@
-<div class="flex mt-3">
-    <app-chess-board></app-chess-board>
+<div class="flex">
+    <app-chess-board
+        [realGame]="true"    
+    ></app-chess-board>
     <div class="info-box">
         <div class="card text-box scroll">
             <ng-container *ngFor="let text of textHistory">

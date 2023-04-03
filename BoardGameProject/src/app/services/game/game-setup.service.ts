@@ -1,29 +1,33 @@
 import { Injectable } from '@angular/core';
 import { concatMap, delay, from, Observable, of } from 'rxjs';
+import { Board } from 'src/app/models/board';
+import { HttpClient} from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameSetupService {
 
+  private apiUrl = "http://localhost:8080/board";
+
   public tempSetupLog: string[] = [
-    "exampleUser joined the game as Player 1",
+    " joined the game as Player 1",
     "...",
-    "guest123 joined the game as Player 2",
+    " joined the game as Player 2",
     "...",
     "Game is ready to start!"
   ];
 
   public tempGameLog: string[] = [
-    "Game Opened for userExample as Player 1 and guest123 as Player 2",
+    "Game Opened for as Player 1 and  as Player 2",
     "...",
-    "userExample starts",
+    " starts",
     "..."
   ]
 
-  public players: string[] = ["exampleUser", "guest123"];
+  public players: string[] = [];
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   public emitMockSetupData(): Observable<string> {
     return from(this.tempSetupLog).pipe(
@@ -45,10 +49,8 @@ export class GameSetupService {
     return this.players;
   }
 
-  // Not a fan of this one that much tbh.......
-  // public nextPlayer(current: string) {
-  //   let next = current === "Player 1" ? "Player 2" : "Player 1";
-  //   this.tempGameLog.push(next);
-  //   this.tempGameLog.push("...");
-  // }
+  public getBoardByID(id: number): Observable<Board> {
+    return this.http.get<Board>(`${this.apiUrl}/${id}`);
+  }
+
 }

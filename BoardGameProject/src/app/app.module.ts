@@ -11,6 +11,8 @@ import { GamesInProgressComponent } from './games-in-progress/games-in-progress.
 import { ChessBoardComponent } from './chess-board/chess-board.component';
 import { SignInModalComponent } from './modals/sign-in-modal/sign-in-modal.component';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -21,12 +23,14 @@ import { FormsModule } from '@angular/forms';
     StatsComponent,
     GamesInProgressComponent,
     ChessBoardComponent,
-    SignInModalComponent
+    SignInModalComponent,
   ],
   imports: [
     FormsModule,
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule,
+    RouterModule
   ],
   providers: [],
   bootstrap: [AppComponent]
