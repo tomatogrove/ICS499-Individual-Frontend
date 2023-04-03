@@ -25,7 +25,9 @@ table.fixed td {
 }
 
 .bs-possible {
-    background-color: #63317e;
+    border-radius: 50%;
+    background-color: red;
+    /* background-color: #ac11ff; */
 }
 
 .white-square {
@@ -33,7 +35,17 @@ table.fixed td {
 }
 
 .ws-possible {
-    background-color: #ac8453;
+    border-radius: 50%;
+    background-color: red;
+    /* background-color: #ffce92; */
+}
+
+.possible {
+    border-radius: 50%;
+    background-color: #56306383;
+    border: none;
+    width: 100%;
+    height: 100%;
 }
 
 .piece {
@@ -42,11 +54,11 @@ table.fixed td {
     border-radius: 5px;
     background-color: transparent;
     width: 100%;
-    height: 100%;
 }
 
 .piece-button {
     background-color: transparent;
     width: 100%;
+    height: 100%;
     border: none;
 }

@@ -6,16 +6,18 @@ export class Space {
     public x: number;
     public y: number;
     public board: ChessBoardComponent;
-    public piece?: Piece;
+    public piece: Piece;
     public possibleMove: boolean;
+    public occupied: boolean;
   
-    constructor(spaceID: number, x: number, y: number, board: ChessBoardComponent, piece?: Piece) {
+    constructor(spaceID: number, x: number, y: number, board: ChessBoardComponent, piece: Piece) {
       this.spaceID = spaceID;
       this.x = x;
       this.y = y;
       this.board = board;
       this.piece = piece; 
       this.possibleMove = false;
+      this.occupied = false;
     }
   
   }

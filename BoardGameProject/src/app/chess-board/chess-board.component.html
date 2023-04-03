@@ -5,16 +5,20 @@
                 <tr>
                     <ng-container *ngFor="let space of row">
                         <td 
-                            [ngClass]="(space.x - space.y) % 2 === 0 
-                                    ? (space.possibleMove ? 'bs-possible' : 'black-square')
-                                    : (space.possibleMove ? 'ws-possible' : 'white-square')">
+                            [ngClass]="(space.x - space.y) % 2 === 0  ? 'black-square' :'white-square'">
                             <button 
-                                *ngIf="realGame && space.piece" 
+                                *ngIf="realGame && space.piece && !space.possibleMove" 
                                 class="piece-button"
                                 (click)="showPossibleMoves(space)"
                                 >
-                                {{space.x}},{{space.y}}
-                                <img class="piece" src="../../assets/images/pieces/{{space.piece.getColorName()}}-{{space.piece.getTypeName()}}.png"/>
+                                <img class="piece" src="../../assets/images/pieces/{{space.piece.color}}-{{space.piece.type}}.png"/>
+                            </button>
+                            <button
+                                *ngIf="realGame && space.possibleMove"
+                                class="possible"
+                                (click)="movePiece(space)"
+                                >
+                                <img *ngIf="space.piece" class="piece" src="../../assets/images/pieces/{{space.piece.color}}-{{space.piece.type}}.png"/>
                             </button>
                         </td>
                     </ng-container>

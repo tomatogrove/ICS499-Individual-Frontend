@@ -1,6 +1,9 @@
 import { Component, Input } from '@angular/core';
+import { Board } from '../models/board';
 import { Piece } from '../models/piece';
 import { Space } from '../models/space';
+import { GameInPlayService } from '../services/game/game-in-play.service';
+import { GameSetupService } from '../services/game/game-setup.service';
 
 @Component({
   selector: 'app-chess-board',
@@ -12,41 +15,64 @@ export class ChessBoardComponent {
   @Input()
   public realGame: boolean = false;
 
-  public spaces: Space[][] = [];
+  public spaces: Space[][] = [[], [], [], [], [], [], [], []];
+  public pieces: Piece[] = [];
+  public board: Board = new Board();
 
-  public possibleMoves: Space[] = [];
+  public loading = true;
+
+  constructor(
+    private gameSetupService: GameSetupService,
+    private gameInPlayService: GameInPlayService
+    ) {}
 
   ngOnInit() {
-    let id = 0;
 
-    for (let i = 0; i < 8; i++) {
-      this.spaces.push([]);
-    }
+    this.gameSetupService.getBoardByID(2).subscribe((board: Board) => {
+      this.board = board;
 
-    for (let i = 8; i > 0; i--) {
-      for (let j = 1; j < 9; j++) {
-        id++;
-        if (this.realGame && (i === 1 || i === 2 || i ===7 || i === 8)) {
-          let space: Space = new Space(id, j, i, this);
-          let piece: Piece = Piece.createPiece(j, i, space, this);
-          this.spaces[8 - i].push(new Space(id, j, i, this, piece));
-        } else {
-          this.spaces[8 - i].push(new Space(id, j, i, this));
-        }
+      this.board.spaces?.forEach((space) => this.spaces[space.y - 1].push(space));
+      this.spaces.forEach((column) => column.sort((a, b) => a.x - b.x));
+      this.spaces.sort((a, b) => b[0].y - a[0].y);
+
+      if (this.board.pieces) {
+        this.pieces = this.board.pieces;
       }
-    }
+
+      this.loading = false;
+    }) 
   }
 
   public showPossibleMoves(space: Space) {
-    if (space.piece) {
-      space.piece.isSelected = !space.piece?.isSelected;
-      if (space.piece.isSelected) {
-        this.possibleMoves = space.piece.getPossibleMoves();
-      } else {
-        this.possibleMoves.forEach((space) => space.possibleMove = false)
-        this.possibleMoves = [];
-      }
+    this.spaces.forEach((row) => row.forEach((space) => space.possibleMove = false));
+    
+    if(this.getSelectedPiece() !== space.piece){
+      this.gameInPlayService.getPossibleMoves(space.piece.pieceID).subscribe((possibleMoves) => {
+        if(!possibleMoves) { return; }
+        possibleMoves.forEach((move) => this.spaces[8 - move.y][move.x - 1].possibleMove = true);
+        space.piece.selected = true;
+      });
+    }else{
+      this.getSelectedPiece().selected = false;
     }
+  }
+
+  public movePiece(space: Space) {
+    let selectedPiece: Piece = this.getSelectedPiece();
+    this.gameInPlayService.movePiece(selectedPiece.pieceID, space.x, space.y).subscribe(piece => {
+      this.spaces.forEach(row => {
+        let space: Space = row.find(e => e.piece?.pieceID === selectedPiece.pieceID);
+        if(space){
+          space.piece = null;
+          return;
+        }
+      });
+
+      this.spaces[8 - space.y][space.x - 1].piece = piece;
+
+      this.spaces.forEach((row) => row.forEach((space) => space.possibleMove = false));
+      selectedPiece.selected = false;
+    });
   }
 
   public getSpace(x: number, y: number): Space | undefined {
@@ -55,5 +81,17 @@ export class ChessBoardComponent {
     space = this.spaces[y - 1].find((space) => space.x === x);
 
     return space;
+  }
+
+  private getSelectedPiece(): Piece {
+    for (let row of this.spaces) {
+      for (let column of row) {
+        if(column.piece?.selected){
+          return column.piece;
+        }
+      }
+    }
+
+    return null;
   }
 }
