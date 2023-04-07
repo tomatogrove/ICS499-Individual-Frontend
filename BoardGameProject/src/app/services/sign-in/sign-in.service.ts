@@ -13,7 +13,7 @@ export class SignInService {
   public signedIn: boolean = false;
   public signInText: string = "Sign In";
   public user: UserAccount;
-  public session: Session = new Session();
+  public session: Session;
 
   private apiUrl: string = "http://localhost:8080";
 
@@ -31,6 +31,7 @@ export class SignInService {
         if (session) {
           this.signedIn = true;
           this.session = session;
+          this.user = session.userAccount;
         } 
         return null;
       }))
@@ -39,6 +40,8 @@ export class SignInService {
   }
 
   public signIn(userAccount: UserAccount): Observable<Session>  {
+    document.cookie = "";
+    this.session = new Session();
     this.session.userAccount = userAccount;
     return this.http.post<Session>(`${this.apiUrl}/session/login`, this.session).pipe(map((session) => {
       if (session) {
