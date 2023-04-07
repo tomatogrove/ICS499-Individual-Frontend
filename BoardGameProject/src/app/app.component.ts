@@ -21,8 +21,20 @@ export class AppComponent {
     this.subscription = new Subscription();
   }
 
+  public ngOnInit() {
+    this.signInService.echo().subscribe();
+  }
+
   public signIn(): void {
     this.modalService.open(SignInModalComponent, { centered: true });
+  }
+
+  public signOut(): void {
+    this.signInService.signOut().subscribe((response) => {
+      if (response) {        
+        this.router.navigate(['home']);
+      }
+    });
   }
 
   public visitHome(): void {
