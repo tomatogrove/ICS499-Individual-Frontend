@@ -2,6 +2,7 @@
   #form="ngForm"
 >
   <div class="modal-content">
+    <!-- Sign In -->
     <div *ngIf="isSignIn">
       <div class="modal-header">
         <h5 class="modal-title">Sign In</h5>
@@ -9,7 +10,7 @@
       <div class="modal-body pb-1" formGroup>
         <div class="p-3">
           <div class="form-group p-2" >
-            <label for="email">Email address</label>
+            <label for="email">Email Address</label>
             <input 
               id="email"
               name="email"
@@ -22,7 +23,7 @@
               [ngClass]="{ 'error-border': email.errors && email.touched }"
               >
               <div *ngIf="email.errors?.['required'] && email.touched" class="error">
-                Email Address is required
+                Email Address is required.
               </div>
           </div>
           <div class="form-group p-2" >
@@ -38,20 +39,23 @@
             #password="ngModel"
             [ngClass]="{ 'error-border': password.errors && password.touched }"
               >
-            <div *ngIf="email.errors?.['required'] && email.touched" class="error">
-              Password is required
+            <div *ngIf="password.errors?.['required'] && password.touched" class="error">
+              Password is required.
             </div>
           </div>
-          <button type="submit" class="button button-text" (click)="signIn()">Sign in</button>
+          <button type="submit" class="button button-text" (click)="signIn()">Sign In</button>
+          <div *ngIf="userAccount.userID === -1" class="error center-text">
+            Entered username or password is incorrect.
+          </div>
         </div>
       </div>
       <div class="modal-footer center-items">
-        <a class="links mx-4" (click)="isSignIn=false">Sign up</a>
+        <a class="links mx-4" (click)="switchMode('signup')">Sign Up</a>
         <a class="links mx-4" >Forgot password?</a>
       </div>
     </div>
 
-    
+    <!-- Sign Up -->
     <div *ngIf="!isSignIn">
       <div class="modal-header">
         <h5 class="modal-title">Sign Up</h5>
@@ -74,9 +78,9 @@
               <div 
                 *ngIf="(userAccount.userID == -1 || userAccount.userID == -3) && username.value === invalidUsername"
                 class="error"
-              >Username already exists</div>
+              >Username already exists.</div>
               <div *ngIf="username.errors?.['required'] && username.touched" class="error">
-                Username is required
+                Username is required.
               </div>
           </div>
           <div class="form-group p-2" >
@@ -89,16 +93,15 @@
               class="form-control" 
               placeholder="Email"
               required
-              [matchInput]="form.controls['emailConfirm']"
               #email="ngModel"
               [ngClass]="{ 'error-border': email.errors && email.touched }"
               >
               <div 
               *ngIf="(userAccount.userID == -1 || userAccount.userID == -2) && email.value === invalidEmail"
               class="error"
-            >Email already exists</div>
+            >Email already exists.</div>
             <div *ngIf="email.errors?.['required'] && email.touched" class="error">
-              Email Address is required
+              Email Address is required.
             </div>
             <label for="emailConfirm">Confirm Email Address</label>
             <input 
@@ -109,15 +112,14 @@
               placeholder="Email"
               required
               [(ngModel)]="confirmEmail"
-              [matchInput]="form.controls['email']"
               #emailConfirm="ngModel"
               [ngClass]="{ 'error-border': emailConfirm.errors && emailConfirm.touched }"
             >
             <div *ngIf="emailConfirm.errors?.['required'] && emailConfirm.touched" class="error">
-              Confirm Email Address is required
+              Confirm Email Address is required.
             </div>
             <div *ngIf="(emailConfirm.value !== email.value) && emailConfirm.touched" class="error">
-              Email Adresses do not match
+              Email Addresses do not match.
             </div>
           </div>
           <div class="form-group p-2" formGroup>
@@ -130,12 +132,11 @@
               class="form-control" 
               placeholder="Password"
               required
-              [matchInput]="form.controls['passwordConfirm']"
               #password="ngModel"
               [ngClass]="{ 'error-border': password.errors && password.touched }"
             >
             <div *ngIf="password.errors?.['required'] && password.touched" class="error">
-              Password is required
+              Password is required.
             </div>
             <label 
               for="passwordConfirm">Confirm Password</label>
@@ -147,21 +148,23 @@
               class="form-control" 
               placeholder="Password"
               required
-              [matchInput]="form.controls['password']"
               [ngClass]="{ 'error-border': passwordConfirm.errors && passwordConfirm.touched }"
               #passwordConfirm="ngModel">
               <div *ngIf="passwordConfirm.errors?.['required'] && passwordConfirm.touched" class="error">
-                Confirm Password is required
+                Confirm Password is required.
               </div>
-              <div *ngIf="(passwordConfirm.errors?.['invalidInput'] && password.errors?.['invalidInput']) && passwordConfirm.touched" class="error">
-                Passwords do not match
+              <div *ngIf="(passwordConfirm.value !== password.value) && passwordConfirm.touched" class="error">
+                Passwords do not match.
               </div>
           </div>
           <button type="submit" class="button button-text pb-0" (click)="signUp(false)">Sign Up</button>
+          <div *ngIf="userAccount.userID < 0" class="error center-text">
+            Sign up failed.
+          </div>
         </div>
       </div>
       <div class="modal-footer center-items">
-        <a class="links mx-4" (click)="isSignIn=true">Sign In</a>
+        <a class="links mx-4" (click)="switchMode('signin')">Sign In</a>
         <a class="links mx-4">Forgot password?</a>
       </div>
     </div>
@@ -172,5 +175,3 @@
     
   </div>
 </form>
-
-

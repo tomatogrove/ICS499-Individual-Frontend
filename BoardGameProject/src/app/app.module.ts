@@ -13,7 +13,6 @@ import { SignInModalComponent } from './modals/sign-in-modal/sign-in-modal.compo
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
-import { MatchInputValidatorDirective } from './validators/match-input-validator.directive';
 
 @NgModule({
   declarations: [
@@ -24,8 +23,7 @@ import { MatchInputValidatorDirective } from './validators/match-input-validator
     StatsComponent,
     GamesInProgressComponent,
     ChessBoardComponent,
-    SignInModalComponent,
-    MatchInputValidatorDirective
+    SignInModalComponent
   ],
   imports: [
     FormsModule,

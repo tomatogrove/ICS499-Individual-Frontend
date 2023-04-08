@@ -34,7 +34,7 @@ export class SignInModalComponent {
     if (this.form.valid) {
       this.signInService.signIn(this.userAccount).subscribe((session) => {
         if (session == null) {
-          console.log("Error!!");
+          this.userAccount.userID = -1;
         } else {
           console.log("Signed in! Session Key: ", session.sessionKey);
           this.userAccount = session.userAccount;
@@ -70,6 +70,11 @@ export class SignInModalComponent {
         
       });
     }
+  }
+
+  public switchMode(mode: "signin" | "signup"): void {
+    this.userAccount = new UserAccount();
+    this.isSignIn = mode === "signin";
   }
 
   private navAway() {
