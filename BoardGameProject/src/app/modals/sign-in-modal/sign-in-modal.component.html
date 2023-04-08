@@ -1,60 +1,49 @@
-<!-- <div>
-  <form class="px-4 py-3">
-    <div class="form-group">
-      <label for="exampleDropdownFormEmail1">Email address</label>
-      <input type="email" class="form-control" id="exampleDropdownFormEmail1" placeholder="email@example.com">
-    </div>
-    <div class="form-group">
-      <label for="exampleDropdownFormPassword1">Password</label>
-      <input type="password" class="form-control" id="exampleDropdownFormPassword1" placeholder="Password">
-    </div>
-    <button type="submit" class="button button-text">Sign in</button>
-  </form>
-  <div class="modal-footer">
-    <a class="dropdown-item" href="#">Sign up</a>
-    <a class="dropdown-item" href="#">Forgot password?</a>
-  </div>
-</div> -->
-
-<!-- Modal -->
-
 <form
   #form="ngForm"
 >
-
   <div class="modal-content">
     <div *ngIf="isSignIn">
       <div class="modal-header">
         <h5 class="modal-title">Sign In</h5>
       </div>
-      <div class="modal-body pb-1">
-        <form class="p-3">
-          <div class="form-group p-2">
+      <div class="modal-body pb-1" formGroup>
+        <div class="p-3">
+          <div class="form-group p-2" >
             <label for="email">Email address</label>
             <input 
-              id="email" 
+              id="email"
               name="email"
               [(ngModel)]="userAccount.email"
               type="email" 
               class="form-control" 
               placeholder="Email"
               required
+              #email="ngModel"
+              [ngClass]="{ 'error-border': email.errors && email.touched }"
               >
+              <div *ngIf="email.errors?.['required'] && email.touched" class="error">
+                Email Address is required
+              </div>
           </div>
-          <div class="form-group p-2">
+          <div class="form-group p-2" >
             <label for="password">Password</label>
             <input 
-              id="password"
-              name="password"
-              [(ngModel)]="userAccount.password"
-              type="password" 
-              class="form-control" 
-              placeholder="Password"
-              required
+            id="password" 
+            name="password"
+            [(ngModel)]="userAccount.password"
+            type="password" 
+            class="form-control" 
+            placeholder="Password"
+            required
+            #password="ngModel"
+            [ngClass]="{ 'error-border': password.errors && password.touched }"
               >
+            <div *ngIf="email.errors?.['required'] && email.touched" class="error">
+              Password is required
+            </div>
           </div>
-          <button type="button" class="button button-text" (click)="signIn()">Sign in</button>
-        </form>
+          <button type="submit" class="button button-text" (click)="signIn()">Sign in</button>
+        </div>
       </div>
       <div class="modal-footer center-items">
         <a class="links mx-4" (click)="isSignIn=false">Sign up</a>
@@ -62,24 +51,35 @@
       </div>
     </div>
 
+    
     <div *ngIf="!isSignIn">
       <div class="modal-header">
         <h5 class="modal-title">Sign Up</h5>
       </div>
       <div class="modal-body">
-        <form class="p-3 pb-0">
-          <div class="form-group p-2">
+        <div class="p-3 pb-0" formGroup>
+          <div class="form-group p-2" >
             <label for="username">Username</label>
             <input 
               id="username"  
               name="username"
               class="form-control" 
+              type="text"
               [(ngModel)]="userAccount.username"
               placeholder="Username"
               required
+              #username="ngModel"
+              [ngClass]="{ 'error-border': username.errors && username.touched }"
               >
+              <div 
+                *ngIf="(userAccount.userID == -1 || userAccount.userID == -3) && username.value === invalidUsername"
+                class="error"
+              >Username already exists</div>
+              <div *ngIf="username.errors?.['required'] && username.touched" class="error">
+                Username is required
+              </div>
           </div>
-          <div class="form-group p-2">
+          <div class="form-group p-2" >
             <label for="email">Email Address</label>
             <input 
               id="email"
@@ -89,16 +89,38 @@
               class="form-control" 
               placeholder="Email"
               required
+              [matchInput]="form.controls['emailConfirm']"
+              #email="ngModel"
+              [ngClass]="{ 'error-border': email.errors && email.touched }"
               >
+              <div 
+              *ngIf="(userAccount.userID == -1 || userAccount.userID == -2) && email.value === invalidEmail"
+              class="error"
+            >Email already exists</div>
+            <div *ngIf="email.errors?.['required'] && email.touched" class="error">
+              Email Address is required
+            </div>
             <label for="emailConfirm">Confirm Email Address</label>
             <input 
               id="emailConfirm" 
+              name="emailConfirm"
               type="email" 
               class="form-control" 
               placeholder="Email"
+              required
+              [(ngModel)]="confirmEmail"
+              [matchInput]="form.controls['email']"
+              #emailConfirm="ngModel"
+              [ngClass]="{ 'error-border': emailConfirm.errors && emailConfirm.touched }"
             >
+            <div *ngIf="emailConfirm.errors?.['required'] && emailConfirm.touched" class="error">
+              Confirm Email Address is required
+            </div>
+            <div *ngIf="(emailConfirm.value !== email.value) && emailConfirm.touched" class="error">
+              Email Adresses do not match
+            </div>
           </div>
-          <div class="form-group p-2">
+          <div class="form-group p-2" formGroup>
             <label for="password">Password</label>
             <input 
               id="password" 
@@ -108,12 +130,35 @@
               class="form-control" 
               placeholder="Password"
               required
+              [matchInput]="form.controls['passwordConfirm']"
+              #password="ngModel"
+              [ngClass]="{ 'error-border': password.errors && password.touched }"
             >
-            <label for="passwordConfirm">Confirm Password</label>
-            <input type="password" class="form-control" id="passwordConfirm" placeholder="Password">
+            <div *ngIf="password.errors?.['required'] && password.touched" class="error">
+              Password is required
+            </div>
+            <label 
+              for="passwordConfirm">Confirm Password</label>
+            <input 
+              id="passwordConfirm" 
+              name="passwordConfirm"
+              [(ngModel)]="confirmPassword"
+              type="password" 
+              class="form-control" 
+              placeholder="Password"
+              required
+              [matchInput]="form.controls['password']"
+              [ngClass]="{ 'error-border': passwordConfirm.errors && passwordConfirm.touched }"
+              #passwordConfirm="ngModel">
+              <div *ngIf="passwordConfirm.errors?.['required'] && passwordConfirm.touched" class="error">
+                Confirm Password is required
+              </div>
+              <div *ngIf="(passwordConfirm.errors?.['invalidInput'] && password.errors?.['invalidInput']) && passwordConfirm.touched" class="error">
+                Passwords do not match
+              </div>
           </div>
-          <button type="button pb-0" class="button button-text" (click)="signUp(false)">Sign Up</button>
-        </form>
+          <button type="submit" class="button button-text pb-0" (click)="signUp(false)">Sign Up</button>
+        </div>
       </div>
       <div class="modal-footer center-items">
         <a class="links mx-4" (click)="isSignIn=true">Sign In</a>

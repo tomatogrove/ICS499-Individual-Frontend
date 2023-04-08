@@ -53,6 +53,15 @@ export class SignInService {
     }));
   }
 
+  public createUser(userAccount: UserAccount): Observable<UserAccount>  {
+    console.log("in create user");
+    return this.http.post<UserAccount>(`${this.apiUrl}/users/add`, userAccount).pipe(map((user) => {
+      this.user = user;
+
+      return user;
+    }));
+  }
+
   public signOut(): Observable<boolean> {
     console.log(this.session.sessionID)
     return this.http.delete<boolean>(`${this.apiUrl}/session/logout/${this.session.sessionID}`).pipe(map((deleted) => {
@@ -64,24 +73,6 @@ export class SignInService {
       }
       console.log("possibly deleted?")
       return deleted;
-    }));
-  }
-
-  public createUser(userAccount: UserAccount): Observable<UserAccount>  {
-    console.log("in create user");
-    return this.http.post<UserAccount>(`${this.apiUrl}/users/add`, userAccount).pipe(map((user) => {
-      if (user.username !== userAccount.username) {
-        user.username = null;
-      }
-      if (user.email !== userAccount.email) {
-        user.email = null;
-      }
-
-      if (user.email !== null && user.username !== null) {
-        this.user = user;
-      }
-
-      return user;
     }));
   }
 }

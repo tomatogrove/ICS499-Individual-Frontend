@@ -15,38 +15,59 @@ export class SignInModalComponent {
 
   public userAccount: UserAccount = new UserAccount;
   public isSignIn: boolean = true;
+  public confirmEmail: string;
+  public confirmPassword: string;
+  public invalidEmail: string;
+  public invalidUsername: string;
 
   constructor(
     public activeModal: NgbActiveModal, 
     private signInService: SignInService
   ) { }
 
+  public ngOnInit() {
+    console.log(this.form);
+  }
+
   public signIn() {
-    this.signInService.signIn(this.userAccount).subscribe((session) => {
-      if (session == null) {
-        console.log("Error!!");
-      } else {
-        console.log("Signed in! Session Key: ", session.sessionKey);
-        this.form.resetForm();
-        this.navAway();
-        // mark username and password as invalid
-      }
-    });
+    this.form.form.markAllAsTouched();
+    if (this.form.valid) {
+      this.signInService.signIn(this.userAccount).subscribe((session) => {
+        if (session == null) {
+          console.log("Error!!");
+        } else {
+          console.log("Signed in! Session Key: ", session.sessionKey);
+          this.userAccount = session.userAccount;
+          this.form.resetForm();
+          this.navAway();
+        }
+      });
+    }
   }
 
   public signUp(isGuest: boolean) {
     this.userAccount.guest = isGuest;
-    if (!isGuest) {
+    this.form.form.markAllAsTouched();
+    console.log(this.form)
+    if (!isGuest && this.form.valid) {
       this.signInService.createUser(this.userAccount).subscribe((user) => {
-        if (user.username === null || user.email === null) {
-          console.log("Error!!");
-          // mark field as touched, and invalidate it as duplicate 
-          // this.userAccount = user;
-          this.form.form.markAllAsTouched();
-        } else {
+        if (user.userID < 0) {
+
           this.userAccount = user;
+          if (user.userID === -1) {
+            this.invalidEmail = user.email;
+            this.invalidUsername = user.username;
+          } else if (user.userID === -2) {
+            this.invalidEmail = user.email;
+          } else if (user.userID === -3) {
+            this.invalidUsername = user.username;
+          }
+
+          console.log("Error!!", user.userID);
+        } else {
           this.signIn();
         }
+        
       });
     }
   }

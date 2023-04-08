@@ -12,12 +12,13 @@ import { AbstractControl, NG_VALIDATORS, ValidationErrors, Validator } from "@an
     ]
 })
 export class MatchInputValidatorDirective implements Validator {
-    
     @Input()
-    public matchTo: AbstractControl;
+    public matchInput: AbstractControl;
+
+    constructor() {}
     
     validate(control: AbstractControl): ValidationErrors | null {
-        if (control.value !== this.matchTo.value) {
+        if (control.value && this.matchInput.value && control.value !== this.matchInput.value) {
             return {invalidInput: true};
         }
         return null;
