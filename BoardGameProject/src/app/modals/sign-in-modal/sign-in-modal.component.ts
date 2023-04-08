@@ -1,6 +1,8 @@
-import { Component} from '@angular/core';
+import { Component, ViewChild} from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { UserAccount } from 'src/app/models/user-account';
 import { SignInService } from 'src/app/services/sign-in/sign-in.service';
 
 @Component({
@@ -9,21 +11,68 @@ import { SignInService } from 'src/app/services/sign-in/sign-in.service';
   styleUrls: ['./sign-in-modal.component.css']
 })
 export class SignInModalComponent {
+  @ViewChild('form', { static: false }) form: NgForm;
 
+  public userAccount: UserAccount = new UserAccount;
   public isSignIn: boolean = true;
+  public confirmEmail: string;
+  public confirmPassword: string;
+  public invalidEmail: string;
+  public invalidUsername: string;
 
-  constructor(public activeModal: NgbActiveModal, private signInService: SignInService) { }
+  constructor(
+    public activeModal: NgbActiveModal, 
+    private signInService: SignInService
+  ) { }
+
+  public ngOnInit() {
+    console.log(this.form);
+  }
 
   public signIn() {
-    this.navAway();
+    this.form.form.markAllAsTouched();
+    if (this.form.valid) {
+      this.signInService.signIn(this.userAccount).subscribe((session) => {
+        if (session == null) {
+          console.log("Error!!");
+        } else {
+          console.log("Signed in! Session Key: ", session.sessionKey);
+          this.userAccount = session.userAccount;
+          this.form.resetForm();
+          this.navAway();
+        }
+      });
+    }
   }
 
   public signUp(isGuest: boolean) {
-    this.navAway();
+    this.userAccount.guest = isGuest;
+    this.form.form.markAllAsTouched();
+    console.log(this.form)
+    if (!isGuest && this.form.valid) {
+      this.signInService.createUser(this.userAccount).subscribe((user) => {
+        if (user.userID < 0) {
+
+          this.userAccount = user;
+          if (user.userID === -1) {
+            this.invalidEmail = user.email;
+            this.invalidUsername = user.username;
+          } else if (user.userID === -2) {
+            this.invalidEmail = user.email;
+          } else if (user.userID === -3) {
+            this.invalidUsername = user.username;
+          }
+
+          console.log("Error!!", user.userID);
+        } else {
+          this.signIn();
+        }
+        
+      });
+    }
   }
 
   private navAway() {
-    this.signInService.signIn();
     this.activeModal.close(); 
   }
 }

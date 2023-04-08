@@ -13,7 +13,7 @@
         <button 
           *ngIf="!signInService.signedIn" class="navigation-button navigation-button-text align-right" (click)="signIn()">Sign In</button>
         <button 
-          *ngIf="signInService.signedIn" class="navigation-button navigation-button-text align-right" (click)="signInService.signOut()">Log Out
+          *ngIf="signInService.signedIn" class="navigation-button navigation-button-text align-right" (click)="signOut()">Log Out
         </button>
         <!-- <div class="dropdown align-right">
           <button 

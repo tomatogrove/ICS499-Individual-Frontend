@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient} from "@angular/common/http";
 import { Space } from 'src/app/models/space';
-import { Piece } from 'src/app/models/piece';
+import { Board } from 'src/app/models/board';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +17,6 @@ export class GameInPlayService {
   }
 
   public movePiece(pieceID: number, x: number, y: number) {
-    return this.http.put<Piece>(`${this.apiUrl}piece/move/${pieceID}/${x}/${y}`, null);
+    return this.http.put<Board>(`${this.apiUrl}piece/move/${pieceID}/${x}/${y}`, null);
   }
 }

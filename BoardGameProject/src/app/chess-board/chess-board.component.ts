@@ -11,34 +11,23 @@ import { GameSetupService } from '../services/game/game-setup.service';
   styleUrls: ['./chess-board.component.css']
 })
 export class ChessBoardComponent {
-
+  
   @Input()
   public realGame: boolean = false;
 
-  public spaces: Space[][] = [[], [], [], [], [], [], [], []];
-  public pieces: Piece[] = [];
-  public board: Board = new Board();
+  public spaces: Space[][];
+  public board: Board;
 
-  public loading = true;
+  public loading: boolean = true;
 
   constructor(
     private gameSetupService: GameSetupService,
     private gameInPlayService: GameInPlayService
     ) {}
 
-  ngOnInit() {
-
-    this.gameSetupService.getBoardByID(2).subscribe((board: Board) => {
-      this.board = board;
-
-      this.board.spaces?.forEach((space) => this.spaces[space.y - 1].push(space));
-      this.spaces.forEach((column) => column.sort((a, b) => a.x - b.x));
-      this.spaces.sort((a, b) => b[0].y - a[0].y);
-
-      if (this.board.pieces) {
-        this.pieces = this.board.pieces;
-      }
-
+  public ngOnInit() {
+    this.gameSetupService.getBoardByID(1).subscribe((board: Board) => {
+      this.setBoard(board);
       this.loading = false;
     }) 
   }
@@ -59,28 +48,9 @@ export class ChessBoardComponent {
 
   public movePiece(space: Space) {
     let selectedPiece: Piece = this.getSelectedPiece();
-    this.gameInPlayService.movePiece(selectedPiece.pieceID, space.x, space.y).subscribe(piece => {
-      this.spaces.forEach(row => {
-        let space: Space = row.find(e => e.piece?.pieceID === selectedPiece.pieceID);
-        if(space){
-          space.piece = null;
-          return;
-        }
-      });
-
-      this.spaces[8 - space.y][space.x - 1].piece = piece;
-
-      this.spaces.forEach((row) => row.forEach((space) => space.possibleMove = false));
-      selectedPiece.selected = false;
+    this.gameInPlayService.movePiece(selectedPiece.pieceID, space.x, space.y).subscribe(board => {
+      this.setBoard(board);
     });
-  }
-
-  public getSpace(x: number, y: number): Space | undefined {
-    let space: Space | undefined = undefined;
-
-    space = this.spaces[y - 1].find((space) => space.x === x);
-
-    return space;
   }
 
   private getSelectedPiece(): Piece {
@@ -93,5 +63,13 @@ export class ChessBoardComponent {
     }
 
     return null;
+  }
+
+  private setBoard(board: Board) {
+    this.spaces = [[], [], [], [], [], [], [], []];
+    this.board = board;
+    this.board.spaces?.forEach((space) => this.spaces[space.y - 1].push(space));
+    this.spaces.forEach((column) => column.sort((a, b) => a.x - b.x));
+    this.spaces.sort((a, b) => b[0].y - a[0].y);
   }
 }
