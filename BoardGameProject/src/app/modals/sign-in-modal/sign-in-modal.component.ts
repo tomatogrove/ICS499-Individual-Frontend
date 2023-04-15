@@ -1,6 +1,5 @@
-import { Component, ViewChild} from '@angular/core';
-import { NgForm } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Component } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { UserAccount } from 'src/app/models/user-account';
 import { SignInService } from 'src/app/services/sign-in/sign-in.service';
@@ -11,14 +10,15 @@ import { SignInService } from 'src/app/services/sign-in/sign-in.service';
   styleUrls: ['./sign-in-modal.component.css']
 })
 export class SignInModalComponent {
-  @ViewChild('form', { static: false }) form: NgForm;
-
-  public userAccount: UserAccount = new UserAccount;
   public isSignIn: boolean = true;
-  public confirmEmail: string;
-  public confirmPassword: string;
+
+  public errorCode: number = 0;
+  public signInFailed: boolean = false;
   public invalidEmail: string;
   public invalidUsername: string;
+
+  public signInForm: FormGroup;
+  public signUpForm: FormGroup;
 
   constructor(
     public activeModal: NgbActiveModal, 
@@ -26,19 +26,29 @@ export class SignInModalComponent {
   ) { }
 
   public ngOnInit() {
-    console.log(this.form);
+    this.signInForm = new FormGroup({
+      email: new FormControl(null, Validators.required),
+      password: new FormControl(null, Validators.required)
+    });
+
+    this.signUpForm = new FormGroup({
+      username: new FormControl(null, Validators.required),
+      email: new FormControl(null, Validators.required),
+      emailConfirm: new FormControl(null, Validators.required),
+      password: new FormControl(null, Validators.required),
+      passwordConfirm: new FormControl(null, Validators.required)
+    });
   }
 
-  public signIn() {
-    this.form.form.markAllAsTouched();
-    if (this.form.valid) {
-      this.signInService.signIn(this.userAccount).subscribe((session) => {
+  public signIn(user: UserAccount = null) {
+    this.signInForm.markAllAsTouched();
+    if (user || this.signInForm.valid) {
+      this.signInService.signIn(user || this.signInForm.value).subscribe((session) => {
         if (session == null) {
-          console.log("Error!!");
+          this.signInFailed = true;
         } else {
-          console.log("Signed in! Session Key: ", session.sessionKey);
-          this.userAccount = session.userAccount;
-          this.form.resetForm();
+          this.signInFailed = false;
+          this.signInForm.reset();
           this.navAway();
         }
       });
@@ -46,33 +56,53 @@ export class SignInModalComponent {
   }
 
   public signUp(isGuest: boolean) {
-    this.userAccount.guest = isGuest;
-    this.form.form.markAllAsTouched();
-    console.log(this.form)
-    if (!isGuest && this.form.valid) {
-      this.signInService.createUser(this.userAccount).subscribe((user) => {
-        if (user.userID < 0) {
-
-          this.userAccount = user;
-          if (user.userID === -1) {
+    this.signUpForm.markAllAsTouched();
+    if (!isGuest && this.validateForm()) {
+      this.signInService.createUser({
+        userID: null,
+        username: this.signUpForm.get("username").value,
+        email: this.signUpForm.get("email").value,
+        password: this.signUpForm.get("password").value,
+        guest: isGuest,
+        session: null
+      }).subscribe((user) => {
+        this.errorCode = user.userID;
+        if (this.errorCode < 0) {
+          if (this.errorCode === -1) {
             this.invalidEmail = user.email;
             this.invalidUsername = user.username;
-          } else if (user.userID === -2) {
+          } else if (this.errorCode === -2) {
             this.invalidEmail = user.email;
-          } else if (user.userID === -3) {
+          } else if (this.errorCode === -3) {
             this.invalidUsername = user.username;
           }
-
-          console.log("Error!!", user.userID);
         } else {
-          this.signIn();
+          this.errorCode = 0;
+          this.signUpForm.reset();
+          this.signIn(user);
         }
-        
       });
     }
   }
 
+  public switchMode(mode: "signin" | "signup"): void {
+    if(mode === "signin"){
+      this.isSignIn = true;
+      this.signUpForm.reset();
+    } else {
+      this.isSignIn = false;
+      this.signInForm.reset();
+    }
+  }
+
+  private validateForm(): boolean {
+    return this.signUpForm.valid &&
+      this.signUpForm.get("email").value === this.signUpForm.get("emailConfirm").value &&
+      this.signUpForm.get("password").value === this.signUpForm.get("passwordConfirm").value;
+  }
+
   private navAway() {
+    this.errorCode = 0;
     this.activeModal.close(); 
   }
 }
