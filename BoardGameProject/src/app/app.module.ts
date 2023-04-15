@@ -4,8 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeScreenComponent } from './home-screen/home-screen.component';
-import { GameSetupComponent } from './game-setup/game-setup.component';
-import { ChessInPlayComponent } from './chess-in-play/chess-in-play.component';
+import { GameComponent } from './game/game.component';
 import { StatsComponent } from './stats/stats.component';
 import { GamesInProgressComponent } from './games-in-progress/games-in-progress.component';
 import { ChessBoardComponent } from './chess-board/chess-board.component';
@@ -18,8 +17,7 @@ import { HttpClientModule } from '@angular/common/http';
   declarations: [
     AppComponent,
     HomeScreenComponent,
-    GameSetupComponent,
-    ChessInPlayComponent,
+    GameComponent,
     StatsComponent,
     GamesInProgressComponent,
     ChessBoardComponent,

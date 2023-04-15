@@ -1,35 +1,28 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { Board } from '../models/board';
 import { Piece } from '../models/piece';
 import { Space } from '../models/space';
 import { GameInPlayService } from '../services/game/game-in-play.service';
-import { GameSetupService } from '../services/game/game-setup.service';
 
 @Component({
   selector: 'app-chess-board',
   templateUrl: './chess-board.component.html',
   styleUrls: ['./chess-board.component.css']
 })
-export class ChessBoardComponent {
-  
+export class ChessBoardComponent implements OnChanges {
   @Input()
-  public realGame: boolean = false;
-
-  public spaces: Space[][];
+  public gameReady: boolean = false;
+  @Input()
   public board: Board;
 
-  public loading: boolean = true;
+  public spaces: Space[][];
 
   constructor(
-    private gameSetupService: GameSetupService,
     private gameInPlayService: GameInPlayService
     ) {}
 
-  public ngOnInit() {
-    this.gameSetupService.getBoardByID(1).subscribe((board: Board) => {
-      this.setBoard(board);
-      this.loading = false;
-    }) 
+  public ngOnChanges(): void {
+    this.setBoard(this.board);
   }
 
   public showPossibleMoves(space: Space) {

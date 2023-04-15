@@ -6,7 +6,7 @@ import { HttpClient} from "@angular/common/http";
 @Injectable({
   providedIn: 'root'
 })
-export class GameSetupService {
+export class GameService {
 
   private apiUrl = "http://localhost:8080/board";
 
@@ -52,5 +52,4 @@ export class GameSetupService {
   public getBoardByID(id: number): Observable<Board> {
     return this.http.get<Board>(`${this.apiUrl}/${id}`);
   }
-
 }

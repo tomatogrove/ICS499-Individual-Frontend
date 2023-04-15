@@ -47,7 +47,7 @@ export class SignInService {
       if (session) {
         this.signedIn = true;
         this.session = session;
-        document.cookie = `key=${session.sessionKey}`;
+        document.cookie = `key=${session.sessionKey}; Path=/;`;
       }
       return session;
     }));
@@ -69,10 +69,14 @@ export class SignInService {
         console.log("deleted");
         this.signedIn = false;
         this.user = null;
-        document.cookie = "";
+        document.cookie = "key=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
       }
       console.log("possibly deleted?")
       return deleted;
     }));
+  }
+
+  public getSessionFromCookie(): string {
+    return document.cookie.split("; ").find((row) => row.startsWith("key="))?.split("=")[1];
   }
 }

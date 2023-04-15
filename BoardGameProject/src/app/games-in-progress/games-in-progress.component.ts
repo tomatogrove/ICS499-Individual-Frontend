@@ -19,7 +19,7 @@ export class GamesInProgressComponent {
   }
 
   public reJoinGame() {
-    this.router.navigate(['game-setup']);
+    this.router.navigate(['game']);
   }
 
   public removeGame(game: Game) {

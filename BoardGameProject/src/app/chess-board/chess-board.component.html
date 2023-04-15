@@ -1,7 +1,3 @@
-<div *ngIf="loading" class="loading">
-    <div></div>
-</div>
-
 <div class="table-border">
     <table class="fixed">
         <tbody>
@@ -11,14 +7,14 @@
                         <td 
                             [ngClass]="(space.x - space.y) % 2 === 0  ? 'black-square' :'white-square'">
                             <button 
-                                *ngIf="realGame && space.piece && !space.possibleMove" 
+                                *ngIf="gameReady && space.piece && !space.possibleMove" 
                                 class="piece-button"
                                 (click)="showPossibleMoves(space)"
                                 >
                                 <img class="piece" src="../../assets/images/pieces/{{space.piece.color}}-{{space.piece.type}}.png"/>
                             </button>
                             <button
-                                *ngIf="realGame && space.possibleMove"
+                                *ngIf="gameReady && space.possibleMove"
                                 class="possible"
                                 (click)="movePiece(space)"
                                 >
