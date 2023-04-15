@@ -10,7 +10,7 @@ import { StatsComponent } from './stats/stats.component';
 import { GamesInProgressComponent } from './games-in-progress/games-in-progress.component';
 import { ChessBoardComponent } from './chess-board/chess-board.component';
 import { SignInModalComponent } from './modals/sign-in-modal/sign-in-modal.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -23,14 +23,15 @@ import { HttpClientModule } from '@angular/common/http';
     StatsComponent,
     GamesInProgressComponent,
     ChessBoardComponent,
-    SignInModalComponent
+    SignInModalComponent,
   ],
   imports: [
     FormsModule,
+    ReactiveFormsModule,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    RouterModule
+    RouterModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
