@@ -2,8 +2,11 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GameService } from '../services/game/game.service';
 import * as io from 'socket.io-client';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SignInService } from '../services/sign-in/sign-in.service';
 import { Chess } from '../models/chess';
+import { SignInModalComponent } from '../modals/sign-in-modal/sign-in-modal.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-game',
@@ -12,6 +15,8 @@ import { Chess } from '../models/chess';
 })
 export class GameComponent {
   public link: string = "";
+  
+  private subscription: Subscription;
 
   public player1: string = "...";
   public player2: string = "...";
@@ -30,8 +35,11 @@ export class GameComponent {
     private gameSetupService: GameService,
     private signInService: SignInService,
     private router: Router,
-    private route: ActivatedRoute
-  ) { }
+    private route: ActivatedRoute,
+    private modalService: NgbModal
+  ) { 
+    this.subscription = new Subscription();
+  }
 
   ngOnInit() {
     this.link = window.location.href;
@@ -39,11 +47,23 @@ export class GameComponent {
 
     this.socket = io("http://localhost:8085");
 
+
     this.socket.on("connect", () => {
         console.log("Connected to server");
 
         let sessionID: string = this.signInService.getSessionFromCookie() || "-1";
-        this.socket.emit("joinGame", `${sessionID},${this.chessID}`);
+        if (!this.signInService.signedIn && sessionID === "-1") {
+          const modalRef = this.modalService.open(SignInModalComponent, { centered: true });
+          this.subscription = modalRef.closed.subscribe(() => {
+            sessionID = this.signInService.getSessionFromCookie() || "-1";
+            if (sessionID !== "-1") {
+              this.socket.emit("joinGame", `${sessionID},${this.chessID}`);
+              this.subscription.unsubscribe();
+            }
+          });
+        } else {
+          this.socket.emit("joinGame", `${sessionID},${this.chessID}`);
+        }
     });
 
     this.socket.on('connect_error', (error) => {

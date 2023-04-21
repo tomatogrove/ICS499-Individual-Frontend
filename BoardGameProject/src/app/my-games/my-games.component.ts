@@ -3,11 +3,11 @@ import { Router } from '@angular/router';
 import { Game, Status, UserDataService } from '../services/user/user-data.service';
 
 @Component({
-  selector: 'app-games-in-progress',
-  templateUrl: './games-in-progress.component.html',
-  styleUrls: ['./games-in-progress.component.css']
+  selector: 'app-my-games',
+  templateUrl: './my-games.component.html',
+  styleUrls: ['./my-games.component.css']
 })
-export class GamesInProgressComponent {
+export class MyGamesComponent {
   
   constructor(public userDataService: UserDataService, public router: Router) { }
 
