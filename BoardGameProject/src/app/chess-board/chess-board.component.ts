@@ -2,59 +2,65 @@ import { Component, Input, OnChanges } from '@angular/core';
 import { Board } from '../models/board';
 import { Piece } from '../models/piece';
 import { Space } from '../models/space';
-import { GameInPlayService } from '../services/game/game-in-play.service';
+import { GameService } from '../services/game/game.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-chess-board',
   templateUrl: './chess-board.component.html',
   styleUrls: ['./chess-board.component.css']
 })
-export class ChessBoardComponent implements OnChanges {
+export class ChessBoardComponent {
   @Input()
   public gameReady: boolean = false;
-  @Input()
+
   public board: Board;
+  private subscription: Subscription;
 
   public spaces: Space[][];
 
-  constructor(
-    private gameInPlayService: GameInPlayService
-    ) {}
+  constructor(private gameService: GameService) { 
+    this.subscription = new Subscription();
+  }
 
-  public ngOnChanges(): void {
-    this.setBoard(this.board);
+  public ngOnInit() {
+    this.subscription = this.gameService.chessSubject.subscribe((chess) => this.setBoard(chess?.board));
+  }
+
+  public ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   public showPossibleMoves(space: Space) {
-    this.spaces.forEach((row) => row.forEach((space) => space.possibleMove = false));
-    
-    if(this.getSelectedPiece() !== space.piece){
-      this.gameInPlayService.getPossibleMoves(space.piece.pieceID).subscribe((possibleMoves) => {
-        if(!possibleMoves) { return; }
-        possibleMoves.forEach((move) => this.spaces[8 - move.y][move.x - 1].possibleMove = true);
-        space.piece.selected = true;
-      });
-    }else{
-      this.getSelectedPiece().selected = false;
+    if (this.gameService.canMove) {
+      this.spaces.forEach((row) => row.forEach((space) => space.possibleMove = false));
+      
+      if (this.getSelectedPiece() !== space.piece) {
+        this.gameService.getPossibleMoves(space.piece.pieceID).subscribe((possibleMoves) => {
+          if (!possibleMoves) { return; }
+          possibleMoves.forEach((move) => this.spaces[8 - move.y][move.x - 1].possibleMove = true);
+          space.piece.selected = true;
+        });
+      } else {
+        this.getSelectedPiece().selected = false;
+      }
     }
+
   }
 
   public movePiece(space: Space) {
     let selectedPiece: Piece = this.getSelectedPiece();
-    this.gameInPlayService.movePiece(selectedPiece.pieceID, space.x, space.y).subscribe(board => {
-      this.setBoard(board);
-    });
+    this.gameService.movePiece(selectedPiece.pieceID, space.x, space.y);
   }
 
   private getSelectedPiece(): Piece {
     for (let row of this.spaces) {
       for (let column of row) {
-        if(column.piece?.selected){
+        if (column.piece?.selected) {
           return column.piece;
         }
       }
     }
-
     return null;
   }
 
