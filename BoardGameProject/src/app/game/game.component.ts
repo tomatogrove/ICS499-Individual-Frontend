@@ -26,9 +26,11 @@ export class GameComponent {
   public loading: boolean = false;
   public gameReady: boolean = false;
 
+  public canMove: boolean = false; 
+
   public chess: Chess;
 
-  private socket: any; // socket.io Socket
+  public socket: any; // socket.io Socket
   private chessID: number;
 
   constructor(
@@ -46,42 +48,7 @@ export class GameComponent {
     this.chessID = +this.route.snapshot.paramMap.get("chessID") || -1;
 
     this.socket = io("http://localhost:8085");
-
-
-    this.socket.on("connect", () => {
-        console.log("Connected to server");
-
-        let sessionID: string = this.signInService.getSessionFromCookie() || "-1";
-        if (!this.signInService.signedIn && sessionID === "-1") {
-          const modalRef = this.modalService.open(SignInModalComponent, { centered: true });
-          this.subscription = modalRef.closed.subscribe(() => {
-            sessionID = this.signInService.getSessionFromCookie() || "-1";
-            if (sessionID !== "-1") {
-              this.socket.emit("joinGame", `${sessionID},${this.chessID}`);
-              this.subscription.unsubscribe();
-            }
-          });
-        } else {
-          this.socket.emit("joinGame", `${sessionID},${this.chessID}`);
-        }
-    });
-
-    this.socket.on('connect_error', (error) => {
-      this.socket.disconnect();
-      this.router.navigate(["/home"]);
-    });
-
-    this.socket.on("onJoinGame", response => {
-      this.chess = response;
-      this.link += this.chessID === -1 ? `/${response.chessID}` : "";
-    });
-
-    this.socket.on("onError", response => {
-      window.alert(response);
-      this.router.navigate(["/home"]);
-    });
-
-    this.socket.on("onGameReady", () => this.gameReady = true);
+    this.setUpSocketEvents();
 
     this.textHistory.push("Room Opened...", "...");
     this.gameSetupService.emitMockSetupData().subscribe((text) => {
@@ -109,5 +76,75 @@ export class GameComponent {
 
   public copyButton(): void {
     navigator.clipboard.writeText(this.link);
+  }
+
+  private setUpSocketEvents(): void {
+    this.socket.on("connect", () => {
+        console.log("Connected to server");
+
+        let sessionID: string = this.signInService.getSessionFromCookie() || "-1";
+        if (!this.signInService.signedIn && sessionID === "-1") {
+          this.openSignInModal(sessionID);
+        } else {
+          this.socket.emit("joinGame", `${sessionID},${this.chessID}`);
+        }
+    });
+
+    this.socket.on('connect_error', (error) => {
+      this.socket.disconnect();
+      this.router.navigate(["/home"]);
+    });
+
+    this.socket.on("onJoinGame", response => {
+      this.chess = response;
+      this.link += this.chessID === -1 ? `/${response.chessID}` : "";
+    });
+
+    this.socket.on("onError", response => {
+      if (response === "Session not found") {
+        this.openSignInModal("-1");
+      } else {
+        window.alert(response);
+        this.router.navigate(["/home"]);
+      }
+    });
+
+    this.socket.on("onGameReady", () => {
+      this.gameReady = true;
+      if (this.signInService.user.userID === this.chess.whitePlayer.userID) {
+        this.canMove = true;
+      }
+    });
+
+    this.socket.on("onNextTurnWhite", response => {
+      this.chess = response;
+      if (this.signInService.user.userID === this.chess.whitePlayer.userID) {
+        this.canMove = true;
+      } else {
+        this.canMove = false;
+      }
+    }); 
+
+    this.socket.on("onNextTurnBlack", response => {
+      this.chess = response;
+      if (this.signInService.user.userID === this.chess.blackPlayer.userID) {
+        this.canMove = true;
+      } else {
+        this.canMove = false;
+      }
+    });
+  }
+
+  private openSignInModal(sessionID: string): void {
+    const modalRef = this.modalService.open(SignInModalComponent, { centered: true });
+    this.subscription = modalRef.closed.subscribe(() => {
+      sessionID = this.signInService.getSessionFromCookie() || "-1";
+      if (sessionID !== "-1") {
+        this.socket.emit("joinGame", `${sessionID},${this.chessID}`);
+        this.subscription.unsubscribe();
+      } else {
+        this.router.navigate(["/home"]);
+      }
+    });
   }
 }
