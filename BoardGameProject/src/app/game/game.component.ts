@@ -32,6 +32,7 @@ export class GameComponent {
 
   public socket: any; // socket.io Socket
   private chessID: number;
+  public playerColor: string;
 
   constructor(
     private gameSetupService: GameService,
@@ -98,6 +99,11 @@ export class GameComponent {
     this.socket.on("onJoinGame", response => {
       this.chess = response;
       this.link += this.chessID === -1 ? `/${response.chessID}` : "";
+      if (this.signInService.session.userAccount.userAccountID === this.chess.whitePlayer.userAccountID) {
+        this.playerColor = "WHITE";
+      } else {
+        this.playerColor = "BLACK";
+      }
     });
 
     this.socket.on("onError", response => {
@@ -111,14 +117,14 @@ export class GameComponent {
 
     this.socket.on("onGameReady", () => {
       this.gameReady = true;
-      if (this.signInService.user.userID === this.chess.whitePlayer.userID) {
+      if (this.signInService.session.userAccount.userAccountID === this.chess.whitePlayer.userAccountID) {
         this.canMove = true;
       }
     });
 
     this.socket.on("onNextTurnWhite", response => {
       this.chess = response;
-      if (this.signInService.user.userID === this.chess.whitePlayer.userID) {
+      if (this.signInService.session.userAccount.userAccountID === this.chess.whitePlayer.userAccountID) {
         this.canMove = true;
       } else {
         this.canMove = false;
@@ -127,7 +133,7 @@ export class GameComponent {
 
     this.socket.on("onNextTurnBlack", response => {
       this.chess = response;
-      if (this.signInService.user.userID === this.chess.blackPlayer.userID) {
+      if (this.signInService.session.userAccount.userAccountID === this.chess.blackPlayer.userAccountID) {
         this.canMove = true;
       } else {
         this.canMove = false;

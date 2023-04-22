@@ -28,7 +28,7 @@
 </div>
 
 <div *ngIf="gameReady" class="flex">
-    <app-chess-board [gameReady]="gameReady" [board]="chess.board" [socket]="socket" [canMove]="canMove"></app-chess-board>
+    <app-chess-board [gameReady]="gameReady" [board]="chess.board" [socket]="socket" [canMove]="canMove" [playerColor]="playerColor"></app-chess-board>
     <div class="info-box">
         <div class="card text-box scroll">
             <ng-container *ngFor="let text of textHistory">

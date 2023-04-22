@@ -67,14 +67,14 @@ export class SignInModalComponent {
     this.signUpForm.markAllAsTouched();
     if (!isGuest && this.validateForm()) {
       this.signInService.createUser({
-        userID: null,
+        userAccountID: null,
         username: this.signUpForm.get("username").value,
         email: this.signUpForm.get("email").value,
         password: this.signUpForm.get("password").value,
         guest: isGuest,
         session: null
       }).subscribe((user) => {
-        this.errorCode = user.userID;
+        this.errorCode = user.userAccountID;
         if (this.errorCode < 0) {
           if (this.errorCode === -1) {
             this.invalidEmail = user.email;

@@ -19,29 +19,36 @@ export class ChessBoardComponent implements OnChanges {
   public socket: any;
   @Input()
   public canMove: boolean = false; 
+  @Input()
+  public playerColor: string;
 
   public spaces: Space[][];
 
   constructor(
-    private gameInPlayService: GameInPlayService,
+    private gameService: GameInPlayService,
     private signInService: SignInService
     ) {}
 
   public ngOnChanges(): void {
-    this.setBoard(this.board);
+    if (this.board) {
+      this.setBoard(this.board);
+    }
   }
 
   public showPossibleMoves(space: Space) {
+    console.log("can move: ", this.canMove);
     if (this.canMove) {
       this.spaces.forEach((row) => row.forEach((space) => space.possibleMove = false));
       
-      if(this.getSelectedPiece() !== space.piece){
-        this.gameInPlayService.getPossibleMoves(space.piece.pieceID).subscribe((possibleMoves) => {
-          if(!possibleMoves) { return; }
-          possibleMoves.forEach((move) => this.spaces[8 - move.y][move.x - 1].possibleMove = true);
-          space.piece.selected = true;
-        });
-      }else{
+      if (this.getSelectedPiece() !== space.piece) {
+        if (space.piece.color === this.playerColor) {
+          this.gameService.getPossibleMoves(space.piece.pieceID).subscribe((possibleMoves) => {
+            if(!possibleMoves) { return; }
+            possibleMoves.forEach((move) => this.spaces[8 - move.y][move.x - 1].possibleMove = true);
+            space.piece.selected = true;
+          });
+        }
+      } else {
         this.getSelectedPiece().selected = false;
       }
     }
@@ -51,9 +58,11 @@ export class ChessBoardComponent implements OnChanges {
     if (this.canMove) {
       let selectedPiece: Piece = this.getSelectedPiece();
   
-      let data: string = `${this.signInService.getSessionFromCookie()},${selectedPiece.pieceID},${space.x},${space.y}`;
-  
-      this.socket.emit("movePiece", data);
+      if (selectedPiece.color === this.playerColor) {
+        let data: string = `${this.signInService.getSessionFromCookie()},${selectedPiece.pieceID},${space.x},${space.y}`;
+    
+        this.socket.emit("movePiece", data);
+      }
     }
   }
 
