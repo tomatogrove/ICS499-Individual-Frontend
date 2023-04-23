@@ -75,6 +75,7 @@ export class SignInModalComponent {
         session: null
       }).subscribe((user) => {
         this.errorCode = user.userAccountID;
+
         if (this.errorCode < 0) {
           if (this.errorCode === -1) {
             this.invalidEmail = user.email;
