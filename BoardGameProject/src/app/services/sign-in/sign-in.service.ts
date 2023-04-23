@@ -12,8 +12,7 @@ export class SignInService {
 
   public signedIn: boolean = false;
   public signInText: string = "Sign In";
-  public user: UserAccount;
-  public session: Session;
+  public session: Session = new Session();
 
   private apiUrl: string = "http://localhost:8080";
 
@@ -27,11 +26,12 @@ export class SignInService {
       let key = document.cookie.split(";")[0].split("=")[1];
       console.log(key);
       console.log(`${this.apiUrl}/session/echo/${key}`);
+      console.log("trying to start session");
       return this.http.get<Session>(`${this.apiUrl}/session/echo/${key}`).pipe(map((session) => {
         if (session) {
           this.signedIn = true;
           this.session = session;
-          this.user = session.userAccount;
+          console.log("the session has started", session);
         } 
         return null;
       }))
@@ -47,7 +47,7 @@ export class SignInService {
       if (session) {
         this.signedIn = true;
         this.session = session;
-        document.cookie = `key=${session.sessionKey}`;
+        document.cookie = `key=${session.sessionKey}; Path=/;`;
       }
       return session;
     }));
@@ -56,8 +56,6 @@ export class SignInService {
   public createUser(userAccount: UserAccount): Observable<UserAccount>  {
     console.log("in create user");
     return this.http.post<UserAccount>(`${this.apiUrl}/users/add`, userAccount).pipe(map((user) => {
-      this.user = user;
-
       return user;
     }));
   }
@@ -68,11 +66,15 @@ export class SignInService {
       if (deleted) {
         console.log("deleted");
         this.signedIn = false;
-        this.user = null;
-        document.cookie = "";
+        this.session = null;
+        document.cookie = "key=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
       }
       console.log("possibly deleted?")
       return deleted;
     }));
+  }
+
+  public getSessionFromCookie(): string {
+    return document.cookie.split("; ").find((row) => row.startsWith("key="))?.split("=")[1];
   }
 }

@@ -18,7 +18,7 @@ export class UserDataService {
   constructor(public signInService: SignInService) { }
 
   public getUserData(): Game[] {
-    if (this.signInService.user) {
+    if (this.signInService.session.userAccount) {
       return this.games;
     }
     return [];

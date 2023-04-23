@@ -1,6 +1,6 @@
 import { SignInService } from '../services/sign-in/sign-in.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { SignInModalComponent } from '../modals/sign-in-modal/sign-in-modal.component';
 import { Subscription } from 'rxjs';
@@ -10,10 +10,10 @@ import { Subscription } from 'rxjs';
   templateUrl: './home-screen.component.html',
   styleUrls: ['./home-screen.component.css']
 })
-export class HomeScreenComponent {
+export class HomeScreenComponent implements OnInit, OnDestroy {
 
   public showSignInModal: boolean = false;
-  private subscription: Subscription; 
+  private subscription: Subscription;
 
   constructor(
     private signInService: SignInService, 
@@ -21,6 +21,10 @@ export class HomeScreenComponent {
     private modalService: NgbModal
   ) { 
     this.subscription = new Subscription();
+  }
+
+  public ngOnInit(): void {
+    
   }
 
   ngOnDestroy() {
@@ -31,11 +35,11 @@ export class HomeScreenComponent {
     if (!this.signInService.signedIn) {
       const modalRef = this.modalService.open(SignInModalComponent, { centered: true });
       this.subscription = modalRef.closed.subscribe(() => {
-        this.router.navigate(['game-setup']);
+        this.router.navigate(['game']);
         this.subscription.unsubscribe();
       });
     } else {
-      this.router.navigate(['game-setup']);
+      this.router.navigate(['game']);
     }
   }
 }

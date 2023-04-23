@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { UserAccount } from 'src/app/models/user-account';
 import { SignInService } from 'src/app/services/sign-in/sign-in.service';
@@ -22,6 +23,7 @@ export class SignInModalComponent {
 
   constructor(
     public activeModal: NgbActiveModal, 
+    private router: Router,
     private signInService: SignInService
   ) { }
 
@@ -38,6 +40,12 @@ export class SignInModalComponent {
       password: new FormControl(null, Validators.required),
       passwordConfirm: new FormControl(null, Validators.required)
     });
+  }
+
+  public ngOnDestroy() {
+    if (!this.signInService.signedIn) {
+      this.router.navigate(["/home"]);
+    }
   }
 
   public signIn(user: UserAccount = null) {
@@ -59,14 +67,15 @@ export class SignInModalComponent {
     this.signUpForm.markAllAsTouched();
     if (!isGuest && this.validateForm()) {
       this.signInService.createUser({
-        userID: null,
+        userAccountID: null,
         username: this.signUpForm.get("username").value,
         email: this.signUpForm.get("email").value,
         password: this.signUpForm.get("password").value,
         guest: isGuest,
         session: null
       }).subscribe((user) => {
-        this.errorCode = user.userID;
+        this.errorCode = user.userAccountID;
+
         if (this.errorCode < 0) {
           if (this.errorCode === -1) {
             this.invalidEmail = user.email;
