@@ -6,5 +6,6 @@ export class Chess {
 	public status: string;
 	public whitePlayer: UserAccount;
 	public blackPlayer: UserAccount;
+	public winner: UserAccount;
 	public board: Board;
 }

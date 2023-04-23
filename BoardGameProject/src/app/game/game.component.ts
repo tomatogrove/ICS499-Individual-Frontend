@@ -97,6 +97,7 @@ export class GameComponent {
     });
 
     this.socket.on("onJoinGame", response => {
+      this.isGameOver();
       this.chess = response;
       this.link += this.chessID === -1 ? `/${response.chessID}` : "";
       if (this.signInService.session.userAccount.userAccountID === this.chess.whitePlayer.userAccountID) {
@@ -116,6 +117,7 @@ export class GameComponent {
     });
 
     this.socket.on("onGameReady", () => {
+      this.isGameOver();
       this.gameReady = true;
       if (this.signInService.session.userAccount.userAccountID === this.chess.whitePlayer.userAccountID) {
         this.canMove = true;
@@ -123,6 +125,8 @@ export class GameComponent {
     });
 
     this.socket.on("onNextTurnWhite", response => {
+
+      this.isGameOver();
       this.chess = response;
       if (this.signInService.session.userAccount.userAccountID === this.chess.whitePlayer.userAccountID) {
         this.canMove = true;
@@ -132,6 +136,7 @@ export class GameComponent {
     }); 
 
     this.socket.on("onNextTurnBlack", response => {
+      this.isGameOver();
       this.chess = response;
       if (this.signInService.session.userAccount.userAccountID === this.chess.blackPlayer.userAccountID) {
         this.canMove = true;
@@ -139,6 +144,10 @@ export class GameComponent {
         this.canMove = false;
       }
     });
+
+    this.socket.on("onGameEnd", () => {
+      this.router.navigate(["/home"]);
+    })
   }
 
   private openSignInModal(sessionID: string): void {
@@ -152,5 +161,12 @@ export class GameComponent {
         this.router.navigate(["/home"]);
       }
     });
+  }
+
+  private isGameOver() {
+    if (this.chess?.winner) {
+      this.socket.emit("leaveGame", `${this.chessID}`)
+      this.router.navigate(["/home"]);
+    }
   }
 }
