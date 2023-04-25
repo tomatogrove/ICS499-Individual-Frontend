@@ -44,7 +44,7 @@ export class GameComponent {
     this.subscription = new Subscription();
   }
 
-  ngOnInit() {
+  public ngOnInit() {
     this.link = window.location.href;
     this.chessID = +this.route.snapshot.paramMap.get("chessID") || -1;
 
@@ -61,6 +61,10 @@ export class GameComponent {
       }
       this.textHistory.push(text);
     });
+  }
+
+  public ngOnDestroy() {
+    this.socket.emit("leaveGame", `${this.chessID}`);
   }
 
   public cancel() {
@@ -147,6 +151,11 @@ export class GameComponent {
 
     this.socket.on("onGameEnd", () => {
       this.router.navigate(["/home"]);
+    })
+
+    this.socket.on("onLeaveRoom", () => {
+      console.log("close room");
+      //show modal saying the other player left...
     })
   }
 
