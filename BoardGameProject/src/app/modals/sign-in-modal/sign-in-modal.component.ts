@@ -29,14 +29,14 @@ export class SignInModalComponent {
 
   public ngOnInit() {
     this.signInForm = new FormGroup({
-      email: new FormControl(null, Validators.required),
+      email: new FormControl(null, [Validators.required, Validators.email]),
       password: new FormControl(null, Validators.required)
     });
 
     this.signUpForm = new FormGroup({
       username: new FormControl(null, Validators.required),
-      email: new FormControl(null, Validators.required),
-      emailConfirm: new FormControl(null, Validators.required),
+      email: new FormControl(null, [Validators.required, Validators.email]),
+      emailConfirm: new FormControl(null, [Validators.required, Validators.email]),
       password: new FormControl(null, Validators.required),
       passwordConfirm: new FormControl(null, Validators.required)
     });
@@ -63,15 +63,14 @@ export class SignInModalComponent {
     }
   }
 
-  public signUp(isGuest: boolean) {
+  public signUp() {
     this.signUpForm.markAllAsTouched();
-    if (!isGuest && this.validateForm()) {
+    if (this.validateForm()) {
       this.signInService.createUser({
         userAccountID: null,
         username: this.signUpForm.get("username").value,
         email: this.signUpForm.get("email").value,
         password: this.signUpForm.get("password").value,
-        guest: isGuest,
         session: null
       }).subscribe((user) => {
         this.errorCode = user.userAccountID;
@@ -102,6 +101,24 @@ export class SignInModalComponent {
       this.isSignIn = false;
       this.signInForm.reset();
     }
+  }
+
+  // Tests an address based on these three main criteria
+  // Address contains at least one @
+  // The local-part is non-empty
+  // The domain contains at least one period
+  public isValidEmailFormat(value: string) {
+    if (!value || value.length < 3) {
+      return false;
+    } else if (!value.includes('@')) {
+      return false;
+    } else if (value.slice(0, value.indexOf('@')).length < 1) {
+      return false;
+    } else if (!value.slice(value.indexOf('@')).includes('.')) {
+      return false;
+    }
+
+    return true;
   }
 
   private validateForm(): boolean {

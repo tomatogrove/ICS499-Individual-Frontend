@@ -86,13 +86,18 @@
             formControlName="email"
             [ngClass]="{ 'error-border': signUpForm.get('email').errors && signUpForm.get('email').touched }"
             >
-          <div *ngIf="signUpForm.get('email').errors && signUpForm.get('email').touched" class="error">
+          <div *ngIf="signUpForm.get('email')?.errors && signUpForm.get('email').errors['required'] && signUpForm.get('email').touched" class="error">
             Email Address is required
           </div>
           <div 
             *ngIf="(errorCode == -1 || errorCode == -2) && signUpForm.get('email').value === invalidEmail"
             class="error">
-            Email already exists
+            Email Address already exists
+          </div>
+          <div
+            *ngIf="!isValidEmailFormat(signUpForm.get('email').value) && signUpForm.get('email')?.errors && signUpForm.get('email')?.errors['email']"
+            class="error">
+            Not a valid Email Address format
           </div>
           
           <label for="emailConfirm">Confirm Email Address</label>
@@ -105,11 +110,20 @@
             formControlName="emailConfirm"
             [ngClass]="{ 'error-border': signUpForm.get('emailConfirm').errors && signUpForm.get('emailConfirm').touched }"
           >
-          <div *ngIf="signUpForm.get('emailConfirm').errors && signUpForm.get('emailConfirm').touched" class="error">
+          <div 
+            *ngIf="signUpForm.get('emailConfirm').errors && signUpForm.get('emailConfirm').errors['required'] && signUpForm.get('emailConfirm').touched" 
+            class="error">
             Confirm Email Address is required
           </div>
-          <div *ngIf="(signUpForm.get('emailConfirm').value !== signUpForm.get('email').value) && signUpForm.get('emailConfirm').touched" class="error">
+          <div 
+            *ngIf="(signUpForm.get('emailConfirm').value !== signUpForm.get('email').value) && signUpForm.get('emailConfirm').touched" 
+            class="error">
             Email Addresses do not match
+          </div>
+          <div
+            *ngIf="!isValidEmailFormat(signUpForm.get('email').value) && signUpForm.get('emailConfirm').errors && signUpForm.get('email').errors['email']"
+            class="error">
+            Not a valid Email Address format
           </div>
         </div>
         <div class="form-group p-2">
@@ -144,7 +158,7 @@
             Passwords do not match
           </div>
         </div>
-        <button type="submit" class="button button-text pb-0" (click)="signUp(false)">Sign Up</button>
+        <button type="submit" class="button button-text pb-0" (click)="signUp()">Sign Up</button>
         <div *ngIf="errorCode < 0" class="error center-text">
           Sign up failed.
         </div>
@@ -155,11 +169,6 @@
       <a class="links mx-4">Forgot password?</a>
     </div>
   </form>
-
-  <div class="modal-footer center-items">
-    <button type="button" class="button button-text" (click)="signUp(true)">Continue as Guest</button>
-  </div>
-    
 </div>
 
 
