@@ -41,3 +41,7 @@
 .space-above {
     margin-top: 3.5rem;
 }
+
+.danger {
+    background-color: #c56161;
+}

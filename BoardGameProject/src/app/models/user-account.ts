@@ -5,6 +5,5 @@ export class UserAccount {
     public username: string;
     public email: string;
     public password: string;
-    public guest: boolean;
     public session: Session;
 }

@@ -12,6 +12,12 @@ import { SignInModalComponent } from './modals/sign-in-modal/sign-in-modal.compo
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import { LeaveGameModalComponent } from './modals/leave-game-modal/leave-game-modal.component';
+import { ForfeitGameModalComponent } from './modals/forfeit-game-modal/forfeit-game-modal.component';
+import { CancelGameModalComponent } from './modals/cancel-game-modal/cancel-game-modal.component';
+import { SignOutModalComponent } from './modals/sign-out-modal/sign-out-modal.component';
+import { AlertModalComponent } from './modals/server-alert-modal/alert-modal.component';
+import { PauseGameModalComponent } from './modals/pause-game-modal/pause-game-modal.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +28,12 @@ import { HttpClientModule } from '@angular/common/http';
     MyGamesComponent,
     ChessBoardComponent,
     SignInModalComponent,
+    LeaveGameModalComponent,
+    ForfeitGameModalComponent,
+    CancelGameModalComponent,
+    SignOutModalComponent,
+    AlertModalComponent,
+    PauseGameModalComponent,
   ],
   imports: [
     FormsModule,

@@ -4,6 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { SignInModalComponent } from './modals/sign-in-modal/sign-in-modal.component';
 import { SignInService } from './services/sign-in/sign-in.service';
+import { SignOutModalComponent } from './modals/sign-out-modal/sign-out-modal.component';
 
 @Component({
   selector: 'app-root',
@@ -30,11 +31,7 @@ export class AppComponent {
   }
 
   public signOut(): void {
-    this.signInService.signOut().subscribe((response) => {
-      if (response) {        
-        this.router.navigate(['home']);
-      }
-    });
+    this.modalService.open(SignOutModalComponent, { centered: true });
   }
 
   public visitHome(): void {
