@@ -104,6 +104,7 @@ export class GameComponent {
       this.chess = response;
       this.link += this.chessID === -1 ? `/${response.chessID}` : "";
       this.chessID = response.chessID;
+      console.log(this.chess);
       if (this.signInService.session.userAccount.userAccountID === this.chess.whitePlayer.userAccountID) {
         this.playerColor = "WHITE";
       } else {

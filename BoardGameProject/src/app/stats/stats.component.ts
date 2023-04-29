@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { UserDataService } from '../services/user/user-data.service';
 import { SignInService } from '../services/sign-in/sign-in.service';
+import { Subscription, map, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-stats',
@@ -13,24 +14,29 @@ export class StatsComponent {
   public username: string = "";
   public loading: boolean = true;
 
+  public subscription: Subscription = new Subscription();
+
   constructor(
     public userDataService: UserDataService,
     public signInService: SignInService
   ) {}
 
-  ngOnInit() {
-    this.userDataService.getUserGames().subscribe((user) => {
-      console.log("user", user.username)
-      this.username = user.username;
-      if (user && user.chessList) {
-        user.chessList.forEach((game) => {
+  public ngOnInit() {
+    this.subscription.add(this.signInService.echo().subscribe(((session) => {
+      this.username = session.userAccount.username
+      console.log("stats component", this.username)
+    })));
+
+    this.userDataService.getUserGames().subscribe((gamesAndUserID) => {
+      if (gamesAndUserID && gamesAndUserID.chessList.length > 0) {
+        gamesAndUserID.chessList.forEach((game) => {
           if (game.blackPlayer && game.whitePlayer) {
             let gameWinner = game.winner;
             if (game.status === "ACTIVE") {
               this.gameStats.activeGames++;
-            } else if (gameWinner.userAccountID === user.userAccountID) {
+            } else if (gameWinner.userAccountID === gamesAndUserID.userAccountID) {
               this.gameStats.wonGames++;
-            } else if (gameWinner.userAccountID === user.userAccountID && game.status === "DONE") {
+            } else if (gameWinner.userAccountID === gamesAndUserID.userAccountID && game.status === "DONE") {
               this.gameStats.lostGames++;
             }
               this.gameStats.allGames++;
@@ -39,6 +45,10 @@ export class StatsComponent {
       }
       this.loading = false;
     });
+  }
+
+  public ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
 }
