@@ -36,7 +36,7 @@ export class StatsComponent {
                 this.gameStats.activeGames++;
               } else if (gameWinner.userAccountID === gamesAndUserID.userAccountID) {
                 this.gameStats.wonGames++;
-              } else if (gameWinner.userAccountID === gamesAndUserID.userAccountID && game.status === "DONE") {
+              } else if (gameWinner.userAccountID !== gamesAndUserID.userAccountID && game.status === "DONE") {
                 this.gameStats.lostGames++;
               }
                 this.gameStats.allGames++;

@@ -6,7 +6,7 @@
         {{username}}'s Games in Progress
     </h1>
 
-    <h3 *ngIf="playerGames.length === 0" class="no-games">No Games Played Yet</h3>
+    <h3 *ngIf="playerGames.length === 0" class="no-games">No Games In Progress</h3>
 
     <table *ngIf="playerGames.length > 0" class="table">
         <thead>
@@ -25,7 +25,7 @@
                     <td>{{row.opponent}}</td>
                     <td>
                         <button class="button button-text" (click)="reJoinGame(row)">Join</button>
-                        <button class="danger button button-text" (click)="forfeitGame(row)">Forfit</button>
+                        <button class="danger button button-text" (click)="forfeitGame(row)">Forfeit</button>
                     </td>
                 </tr>
             </ng-container>

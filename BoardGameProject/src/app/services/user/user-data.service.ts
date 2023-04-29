@@ -35,11 +35,12 @@ export class UserDataService {
   
   public forfeitGame(gameToForfeit: Chess) {
     let userToForfeit = this.signInService.session.userAccount.userAccountID;
-    this.http.put<Chess>(`${this.apiUrl}/chess/forfeit/${userToForfeit}`, gameToForfeit);
+
+    return this.http.put<Chess>(`${this.apiUrl}/chess/forfeit/${userToForfeit}/${gameToForfeit.chessID}`, null);
   }
 
 
   public deleteGame(gameToRemove: Chess) {
-    this.http.delete(`${this.apiUrl}/chess/delete/${gameToRemove.chessID}`);
+    return this.http.delete(`${this.apiUrl}/chess/delete/${gameToRemove.chessID}`);
   }
 }

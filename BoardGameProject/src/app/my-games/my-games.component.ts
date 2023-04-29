@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserDataService } from '../services/user/user-data.service';
-import { Subscription } from 'rxjs';
+import { Subscription, of, switchMap } from 'rxjs';
 import { SignInService } from '../services/sign-in/sign-in.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ForfeitGameModalComponent } from '../modals/forfeit-game-modal/forfeit-game-modal.component';
@@ -53,11 +53,16 @@ export class MyGamesComponent {
 
   public forfeitGame(game) {
     const modalRef = this.modalService.open(ForfeitGameModalComponent, { centered: true });
-    this.subscriptions.push(modalRef.closed.subscribe((forfeit?: boolean) => {
-      if (forfeit) {
-        this.userDataService.forfeitGame(game);
-        this.playerGames = this.playerGames.filter((g) => g !== game);
-      }
-    }))
+    this.subscriptions.push(modalRef.closed.pipe(switchMap((forfeit?: boolean) => {
+        if (forfeit) {
+          return this.userDataService.forfeitGame(game);
+        }
+        return of(null);
+      })).subscribe((game) => {
+        if (game) {
+          this.ngOnInit();
+        }
+      })
+    );
   }
 }
