@@ -33,13 +33,13 @@ export class UserDataService {
     }));
   }
   
-  public forfeitGame() {
-
+  public forfeitGame(gameToForfeit: Chess) {
+    let userToForfeit = this.signInService.session.userAccount.userAccountID;
+    this.http.put<Chess>(`${this.apiUrl}/chess/forfeit/${userToForfeit}`, gameToForfeit);
   }
 
 
   public deleteGame(gameToRemove: Chess) {
-
-    // this.games = this.games.filter((game) => game.gameID !== gameToRemove.gameID)
+    this.http.delete(`${this.apiUrl}/chess/delete/${gameToRemove.chessID}`);
   }
 }

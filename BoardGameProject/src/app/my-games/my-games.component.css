@@ -21,6 +21,10 @@
     background-color: #c56161;
 }
 
+.no-games {
+    padding-top: 4rem;
+}
+
 td {
     text-align: center;
     vertical-align: middle;

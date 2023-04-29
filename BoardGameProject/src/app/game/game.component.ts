@@ -105,7 +105,7 @@ export class GameComponent {
       this.link += this.chessID === -1 ? `/${response.chessID}` : "";
       this.chessID = response.chessID;
       console.log(this.chess);
-      if (this.signInService.session.userAccount.userAccountID === this.chess.whitePlayer.userAccountID) {
+      if (this.signInService.session.userAccount.userAccountID === this.chess.whitePlayerID) {
         this.playerColor = "WHITE";
       } else {
         this.playerColor = "BLACK";
@@ -130,14 +130,14 @@ export class GameComponent {
 
     this.socket.on("onGameReady", () => {
       this.gameReady = true;
-      if (this.signInService.session.userAccount.userAccountID === this.chess.whitePlayer.userAccountID) {
+      if (this.signInService.session.userAccount.userAccountID === this.chess.whitePlayerID) {
         this.canMove = true;
       }
     });
 
     this.socket.on("onNextTurnWhite", response => {
       this.chess = response;
-      if (this.signInService.session.userAccount.userAccountID === this.chess.whitePlayer.userAccountID) {
+      if (this.signInService.session.userAccount.userAccountID === this.chess.whitePlayerID) {
         this.canMove = true;
       } else {
         this.canMove = false;

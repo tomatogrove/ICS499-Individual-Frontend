@@ -31,7 +31,7 @@ export class HomeScreenComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  public selectChess(): void {
+  public newGame(): void {
     if (!this.signInService.signedIn) {
       const modalRef = this.modalService.open(SignInModalComponent, { centered: true });
       this.subscription = modalRef.closed.subscribe(() => {
@@ -41,5 +41,9 @@ export class HomeScreenComponent implements OnInit, OnDestroy {
     } else {
       this.router.navigate(['game']);
     }
+  }
+
+  public joinGame(): void {
+    
   }
 }

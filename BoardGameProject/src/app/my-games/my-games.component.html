@@ -1,13 +1,18 @@
 <div class="flex mt-4">
-    <h1>
-        Example User's Games in Progress
+    <h1 *ngIf="!username">
+        Games in Progress
+    </h1>
+    <h1 *ngIf="username">
+        {{username}}'s Games in Progress
     </h1>
 
-    <table class="table">
+    <h3 *ngIf="playerGames.length === 0" class="no-games">No Games Played Yet</h3>
+
+    <table *ngIf="playerGames.length > 0" class="table">
         <thead>
             <tr>
-                <th scope="col">Date Started</th>
-                <th scope="col">Date Last Played</th>
+                <th scope="col">Started</th>
+                <th scope="col">Last Played</th>
                 <th scope="col">Opponent</th>
                 <th scope="col">Rejoin?</th>
             </tr>
@@ -15,12 +20,12 @@
         <tbody>
             <ng-container *ngFor="let row of playerGames">
                 <tr>
-                    <td>{{row.dateStarted}}</td>
-                    <td>{{row.dateLatest}}</td>
+                    <td>{{row.startedDate}}</td>
+                    <td>{{row.lastPlayed}}</td>
                     <td>{{row.opponent}}</td>
                     <td>
-                        <button class="button button-text" (click)="reJoinGame()">Join</button>
-                        <button class="danger button button-text" (click)="removeGame(row)">Forfit</button>
+                        <button class="button button-text" (click)="reJoinGame(row)">Join</button>
+                        <button class="danger button button-text" (click)="forfeitGame(row)">Forfit</button>
                     </td>
                 </tr>
             </ng-container>
