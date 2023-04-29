@@ -1,6 +1,9 @@
 <div class="flex mt-4">
-    <h1>
-        Example User's Game Stats
+    <h1 *ngIf="!username">
+        Game Stats
+    </h1>
+    <h1 *ngIf="username">
+        {{username}}'s Game Stats
     </h1>
     <table class="table">
       <tbody>

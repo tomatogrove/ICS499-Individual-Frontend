@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { Status, UserDataService } from '../services/user/user-data.service';
+import { UserDataService } from '../services/user/user-data.service';
+import { SignInService } from '../services/sign-in/sign-in.service';
 
 @Component({
   selector: 'app-stats',
@@ -9,20 +10,34 @@ import { Status, UserDataService } from '../services/user/user-data.service';
 export class StatsComponent {
 
   public gameStats = {allGames: 0, activeGames: 0, wonGames: 0, lostGames: 0};
+  public username: string = "";
+  public loading: boolean = true;
 
-  constructor(public userDataService: UserDataService) {}
+  constructor(
+    public userDataService: UserDataService,
+    public signInService: SignInService
+  ) {}
 
   ngOnInit() {
-    const userGames = this.userDataService.getUserData();
-    userGames.forEach((game) => {
-      if (game.status === Status.ACTIVE) {
-        this.gameStats.activeGames++;
-      } else if (game.status === Status.WON) {
-        this.gameStats.wonGames++;
-      } else if (game.status === Status.LOST) {
-        this.gameStats.lostGames++;
+    this.userDataService.getUserGames().subscribe((user) => {
+      console.log("user", user.username)
+      this.username = user.username;
+      if (user && user.chessList) {
+        user.chessList.forEach((game) => {
+          if (game.blackPlayer && game.whitePlayer) {
+            let gameWinner = game.winner;
+            if (game.status === "ACTIVE") {
+              this.gameStats.activeGames++;
+            } else if (gameWinner.userAccountID === user.userAccountID) {
+              this.gameStats.wonGames++;
+            } else if (gameWinner.userAccountID === user.userAccountID && game.status === "DONE") {
+              this.gameStats.lostGames++;
+            }
+              this.gameStats.allGames++;
+          }
+        })
       }
-      this.gameStats.allGames++;
+      this.loading = false;
     });
   }
 

@@ -15,15 +15,15 @@ export class MyGamesComponent {
   public playerGames: Game[] = [];
 
   ngOnInit() {
-    this.playerGames = this.userDataService.getUserData().filter((game) => game.status === Status.ACTIVE);
+    // this.playerGames = this.userDataService.getUserGames().filter((game) => game.status === Status.ACTIVE);
   }
 
   public reJoinGame() {
-    this.router.navigate(['game']);
+    // this.router.navigate(['game']);
   }
 
   public removeGame(game: Game) {
-    this.userDataService.removeGame(game);
-    this.playerGames = this.userDataService.getUserData().filter((game) => game.status === Status.ACTIVE);
+    // this.userDataService.deleteGame(game);
+    // this.playerGames = this.userDataService.getUserGames().filter((game) => game.status === Status.ACTIVE);
   }
 }

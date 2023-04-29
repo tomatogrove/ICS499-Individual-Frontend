@@ -71,7 +71,8 @@ export class SignInModalComponent {
         username: this.signUpForm.get("username").value,
         email: this.signUpForm.get("email").value,
         password: this.signUpForm.get("password").value,
-        session: null
+        session: null,
+        chessList: []
       }).subscribe((user) => {
         this.errorCode = user.userAccountID;
 
