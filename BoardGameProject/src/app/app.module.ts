@@ -35,7 +35,7 @@ import { JoinGameModalComponent } from './modals/join-game-modal/join-game-modal
     SignOutModalComponent,
     AlertModalComponent,
     PauseGameModalComponent,
-    JoinGameModalComponent,
+    JoinGameModalComponent
   ],
   imports: [
     FormsModule,

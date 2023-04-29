@@ -130,6 +130,6 @@ export class SignInModalComponent {
 
   private navAway() {
     this.errorCode = 0;
-    this.activeModal.close(); 
+    this.activeModal.close(this.signInService.signedIn); 
   }
 }
