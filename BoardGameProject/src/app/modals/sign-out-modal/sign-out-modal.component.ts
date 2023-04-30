@@ -19,9 +19,9 @@ export class SignOutModalComponent {
 
   public signOut() {
     this.signInService.signOut().subscribe((response) => {
-      if (response) {        
+      if (response) {
         this.router.navigate(['home']);
-        this.activeModal.close(); 
+        this.activeModal.close();
       }
     });
   }

@@ -44,7 +44,11 @@ export class ChessBoardComponent implements OnChanges {
         if (space.piece.color === this.playerColor) {
           this.gameService.getPossibleMoves(space.piece.pieceID).subscribe((possibleMoves) => {
             if(!possibleMoves) { return; }
-            possibleMoves.forEach((move) => this.spaces[8 - move.y][move.x - 1].possibleMove = true);
+            possibleMoves.forEach((move) => {
+              this.reverseForBlack();
+              this.spaces[8 - move.y][move.x - 1].possibleMove = true;
+              this.reverseForBlack();
+            });
             space.piece.selected = true;
           });
         }
@@ -83,5 +87,13 @@ export class ChessBoardComponent implements OnChanges {
     this.board.spaces?.forEach((space) => this.spaces[space.y - 1].push(space));
     this.spaces.forEach((column) => column.sort((a, b) => a.x - b.x));
     this.spaces.sort((a, b) => b[0].y - a[0].y);
+    this.reverseForBlack();
+  }
+
+  private reverseForBlack(){
+    if(this.playerColor === "BLACK"){
+      this.spaces.reverse();
+      this.spaces.forEach((column) => column.reverse());
+    }
   }
 }

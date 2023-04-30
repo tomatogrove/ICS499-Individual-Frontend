@@ -4,8 +4,7 @@
             <ng-container *ngFor="let row of spaces">
                 <tr>
                     <ng-container *ngFor="let space of row">
-                        <td 
-                            [ngClass]="(space.x - space.y) % 2 === 0  ? 'black-square' :'white-square'">
+                        <td [ngClass]="(space.x - space.y) % 2 === 0  ? 'black-square' :'white-square'">
                             <button 
                                 *ngIf="gameReady && space.piece && !space.possibleMove" 
                                 class="piece-button"
