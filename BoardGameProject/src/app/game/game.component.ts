@@ -164,7 +164,9 @@ export class GameComponent {
       modalRef.componentInstance.title = title;
       modalRef.componentInstance.text = text;
       this.subscriptions.push(modalRef.closed.subscribe(() => {
-        this.router.navigate(["/home"]);
+        this.hasLeft = true;
+        this.socket.disconnect();
+        this.router.navigate(["my-stats"]);
       }));
       
     })

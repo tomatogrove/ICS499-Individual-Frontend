@@ -1,7 +1,8 @@
 body {
-    margin-top: 60px;
+    margin-top: 80px;
     padding: 30px;
     font-family: sans-serif;
+    height: 100%;
 }
 
 main {
