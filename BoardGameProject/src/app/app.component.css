@@ -44,6 +44,24 @@ header * {
     padding: 0 .75rem 0 .75rem;
 }
 
+.username {
+    width: fit-content;
+    height: 2.5rem;
+    background-color: #a6a7ce;
+    border: none;
+    text-align: center;
+    display: inline-block;
+    border-radius: 5px;
+    margin: .5rem;
+    cursor: default;
+}
+
+.username-text {
+    color: #491667;
+    font-size: larger;
+    padding: 0 .75rem 0 .75rem;
+}
+
 .align-right {
     float: right;
 } 

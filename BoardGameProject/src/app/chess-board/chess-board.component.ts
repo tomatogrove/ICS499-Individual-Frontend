@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { Board } from '../models/board';
 import { Piece } from '../models/piece';
 import { Space } from '../models/space';
-import { GameInPlayService } from '../services/game/game-in-play.service';
+import { GameService } from '../services/game/game.service';
 import { SignInService } from '../services/sign-in/sign-in.service';
 
 @Component({
@@ -25,7 +25,7 @@ export class ChessBoardComponent implements OnChanges {
   public spaces: Space[][];
 
   constructor(
-    private gameService: GameInPlayService,
+    private gameService: GameService,
     private signInService: SignInService
     ) {}
 
