@@ -17,7 +17,7 @@
                                 class="possible"
                                 (click)="movePiece(space)"
                                 >
-                                <img class="piece" src="../../assets/images/pieces/{{space.piece.color}}-{{space.piece.type}}.png"/>
+                                <img *ngIf="space.piece" class="piece" src="../../assets/images/pieces/{{space.piece.color}}-{{space.piece.type}}.png"/>
                             </button>
                         </td>
                     </ng-container>
