@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GameService } from '../services/game/game.service';
 import * as io from 'socket.io-client';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SignInService } from '../services/sign-in/sign-in.service';
 import { Chess } from '../models/chess';
 import { SignInModalComponent } from '../modals/sign-in-modal/sign-in-modal.component';
@@ -11,6 +10,8 @@ import { ForfeitGameModalComponent } from '../modals/forfeit-game-modal/forfeit-
 import { AlertModalComponent } from '../modals/server-alert-modal/alert-modal.component';
 import { PauseGameModalComponent } from '../modals/pause-game-modal/pause-game-modal.component';
 import { CancelGameModalComponent } from '../modals/cancel-game-modal/cancel-game-modal.component';
+import { Piece } from '../models/piece';
+import { Space } from '../models/space';
 
 @Component({
   selector: 'app-game',
@@ -22,9 +23,6 @@ export class GameComponent {
   
   private subscriptions: Subscription[];
 
-  public player1: string = "...";
-  public player2: string = "...";
-
   public textHistory: string[] = [];
 
   public loading: boolean = false;
@@ -32,6 +30,7 @@ export class GameComponent {
   public hasLeft: boolean = false;
 
   public canMove: boolean = false; 
+  public canMoveColor: string = "";
 
   public chess: Chess;
 
@@ -39,8 +38,10 @@ export class GameComponent {
   private chessID: number;
   public playerColor: string;
 
+  private boardLetters: string = "abcdefgh";
+  private pieceMove: string;
+
   constructor(
-    private gameSetupService: GameService,
     private signInService: SignInService,
     private router: Router,
     private route: ActivatedRoute,
@@ -56,16 +57,7 @@ export class GameComponent {
     this.socket = io("http://localhost:8085");
     this.setUpSocketEvents();
 
-    this.textHistory.push("Room Opened...", "...");
-    this.gameSetupService.emitMockSetupData().subscribe((text) => {
-      if (text.includes("Player 1")) {
-        this.player1 = "exampleUser";
-      } else if (text.includes("Player 2")) {
-        this.player2 = "guest123";
-      } else if (text === "Game is ready to start!") {
-      }
-      this.textHistory.push(text);
-    });
+    this.textHistory.push("Room Opened...");
   }
 
   public ngOnDestroy() {
@@ -96,7 +88,6 @@ export class GameComponent {
     });
 
     this.socket.on('connect_error', (error) => {
-      this.socket.disconnect();
       this.router.navigate(["/home"]);
     });
 
@@ -104,7 +95,8 @@ export class GameComponent {
       this.chess = response;
       this.link += this.chessID === -1 ? `/${response.chessID}` : "";
       this.chessID = response.chessID;
-      if (this.signInService.session.userAccount.userAccountID === this.chess.whitePlayer.userAccountID) {
+      console.log(this.chess);
+      if (this.signInService.session.userAccount.userAccountID === this.chess.whitePlayerID) {
         this.playerColor = "WHITE";
       } else {
         this.playerColor = "BLACK";
@@ -115,41 +107,48 @@ export class GameComponent {
       if (response === "Session not found") {
         this.openSignInModal("-1");
       } else {
-        let sessionID = this.signInService.getSessionFromCookie();
         const modalRef = this.modalService.open(AlertModalComponent, { centered: true });
         modalRef.componentInstance.title = "Server Error";
         modalRef.componentInstance.text = response;
         this.subscriptions.push(modalRef.closed.subscribe(() => {
-          this.socket.disconnect();
-          this.socket.emit("leaveGame", `${sessionID},${this.chessID}`);
           this.router.navigate(["/home"]);
         }));
       }
     });
 
-    this.socket.on("onGameReady", () => {
+    this.socket.on("onGameReady", (response) => {
+      this.chess = response;
       this.gameReady = true;
-      if (this.signInService.session.userAccount.userAccountID === this.chess.whitePlayer.userAccountID) {
+      if (this.signInService.session.userAccount.userAccountID === this.chess.whitePlayerID) {
         this.canMove = true;
       }
+      this.canMoveColor = "WHITE";
+      console.log(this.chess);
+      this.sendToChat(this.chess.whitePlayer.username + " has joined as the White Player");
+      this.sendToChat(this.chess.blackPlayer.username + " has joined as the Black Player");
+      this.sendToChat("The game is ready to play!");
     });
 
     this.socket.on("onNextTurnWhite", response => {
+      this.sendToChat(this.formatMoveForChat(this.findMovedPiece(response)));
       this.chess = response;
-      if (this.signInService.session.userAccount.userAccountID === this.chess.whitePlayer.userAccountID) {
+      if (this.signInService.session.userAccount.userAccountID === this.chess.whitePlayerID) {
         this.canMove = true;
       } else {
         this.canMove = false;
       }
+      this.canMoveColor = "WHITE";
     }); 
 
     this.socket.on("onNextTurnBlack", response => {
+      this.sendToChat(this.formatMoveForChat(this.findMovedPiece(response)));
       this.chess = response;
       if (this.signInService.session.userAccount.userAccountID === this.chess.blackPlayer.userAccountID) {
         this.canMove = true;
       } else {
         this.canMove = false;
       }
+      this.canMoveColor = "BLACK";
     });
 
     this.socket.on("onGameEnd", (response: string) => {
@@ -171,8 +170,6 @@ export class GameComponent {
       modalRef.componentInstance.title = title;
       modalRef.componentInstance.text = text;
       this.subscriptions.push(modalRef.closed.subscribe(() => {
-        this.hasLeft = true;
-        this.socket.disconnect();
         this.router.navigate(["/home"]);
       }));
       
@@ -181,14 +178,12 @@ export class GameComponent {
     this.socket.on("onLeaveGame", (userID) => {
       console.log("close room");
       this.canMove = false;
-      this.hasLeft = true;
       if (userID !== this.signInService.session.userAccount.userAccountID) {
         const modalRef = this.modalService.open(AlertModalComponent, { centered: true });
         modalRef.componentInstance.title = "Game Interrupted";
         modalRef.componentInstance.text = 
           "Your opponent has left the game.\nThe game has been saved and you will be sent to the home screen.\nHave everyone rejoin to continue the game.";
         this.subscriptions.push(modalRef.closed.subscribe(() => {
-          this.socket.disconnect();
           this.router.navigate(["/home"]);
         }));
       }
@@ -199,22 +194,16 @@ export class GameComponent {
     const modalRef = this.modalService.open(CancelGameModalComponent, { centered: true });
     this.subscriptions.push(modalRef.closed.subscribe((cancel?: boolean) => {
       if (cancel) {
-        this.hasLeft = true;
         this.router.navigate(['home']);
-        this.socket.disconnect();
       }
     }));
   }
 
   public pauseMatch() {
     console.log("pausing match");
-    let sessionID = this.signInService.getSessionFromCookie();
     const modalRef = this.modalService.open(PauseGameModalComponent, { centered: true });
     this.subscriptions.push(modalRef.closed.subscribe((leave?: boolean) => {
       if (leave) {
-        this.hasLeft = true;
-        this.socket.emit("leaveGame", `${sessionID},${this.chessID}`);
-        this.socket.disconnect();
         this.router.navigate(['my-games']);
       }
     }));
@@ -245,5 +234,36 @@ export class GameComponent {
         this.router.navigate(["/home"]);
       }
     }));
+  }
+
+  public formatMoveForChat(space): string {
+    let pieceColor = space.piece.color.toLowerCase();
+    let pieceType = space.piece.type.toLowerCase();
+    let xLetter = this.boardLetters[space.x - 1];
+    return pieceColor + " " + pieceType + " to " + xLetter + space.y;
+  }
+
+  private sendToChat(chat: string) {
+    this.textHistory.push(chat);
+  }
+
+  private findMovedPiece(game: Chess): Space {
+    let origList = this.chess.board.spaces.filter((s) => !s.occupied);
+    let respList = game.board.spaces.filter((s) => s.occupied);
+    let result = respList.filter((x) => origList.some(y => {
+        return x.spaceID === y.spaceID;
+      }
+    ));
+
+    if(!result[0]){
+      origList = this.chess.board.spaces.filter((s) => s.occupied && s.piece.color !== this.canMoveColor);
+      respList = game.board.spaces.filter((s) => s.occupied && s.piece.color === this.canMoveColor);
+      result = respList.filter((x) => origList.some(y => {
+          return x.spaceID === y.spaceID && x.piece.color !== y.piece.color;
+        }
+      ));
+    }
+
+    return result[0] || null;
   }
 }

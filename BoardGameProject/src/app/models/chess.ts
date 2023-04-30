@@ -7,5 +7,10 @@ export class Chess {
 	public whitePlayer: UserAccount;
 	public blackPlayer: UserAccount;
 	public winner: UserAccount;
+	public blackPlayerID: number;
+	public whitePlayerID: number;
+	public winnerID: number;
 	public board: Board;
+	public startedDate: Date;
+	public lastPlayed: Date;
 }

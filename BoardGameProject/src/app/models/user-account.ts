@@ -1,3 +1,4 @@
+import { Chess } from "./chess";
 import { Session } from "./session";
 
 export class UserAccount {
@@ -6,4 +7,5 @@ export class UserAccount {
     public email: string;
     public password: string;
     public session: Session;
+    public chessList: Chess[];
 }

@@ -7,11 +7,16 @@
   <div class="card text-center" style="width: 30rem;">
     <img class="card-img-top img-background" src="../../assets/images/chess-clipart.png" alt="clipart with purple chess pieces"/>
     <div class="card-body">
-      <h5 class="card-title">Start a new game of Chess</h5>
+      <h5 class="card-title">Start a game of Chess</h5>
       <p class="card-text">Play online with your friends!</p>
-      <button class="button button-text" (click)="selectChess()">
-        Play Now
-      </button>
+      <div>
+        <button class="space-between button button-text" (click)="newGame()">
+          New Game
+        </button>
+        <button class="space-between button button-text" (click)="joinGame()">
+          Join Game
+        </button>
+      </div>
     </div>
   </div>
 </div>

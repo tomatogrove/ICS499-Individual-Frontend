@@ -1,45 +1,46 @@
 import { Injectable } from '@angular/core';
 import { SignInService } from '../sign-in/sign-in.service';
+import { Chess } from 'src/app/models/chess';
+import { UserAccount } from 'src/app/models/user-account';
+import { Observable, map, switchMap } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserDataService {
 
-  public games: Game[] = 
-  [
-    { gameID: 1, dateStarted: '03/21/23', dateLatest: '03/23/23', opponent:'guest123', status: Status.ACTIVE},
-    { gameID: 2, dateStarted: '03/22/23', dateLatest: '03/26/23', opponent:'fredB', status: Status.ACTIVE},
-    { gameID: 3, dateStarted: '03/23/23', dateLatest: '03/27/23', opponent:'fredB', status: Status.WON},
-    { gameID: 4, dateStarted: '03/24/23', dateLatest: '03/25/23', opponent:'guestabc', status: Status.WON},
-    { gameID: 5, dateStarted: '03/25/23', dateLatest: '03/25/23', opponent:'janeIE', status: Status.LOST}
-  ];
+  private apiUrl: string = "http://localhost:8080";
 
-  constructor(public signInService: SignInService) { }
+  constructor(
+    public signInService: SignInService, 
+    private http: HttpClient
+  ) { }
 
-  public getUserData(): Game[] {
-    if (this.signInService.session.userAccount) {
-      return this.games;
-    }
-    return [];
+  public getUserGames(): Observable<any> {
+    return this.signInService.echo().pipe(switchMap((session) => {
+      if (session && session.userAccount?.userAccountID) {
+        return this.http.get<Chess[]>(`${this.apiUrl}/chess/all/${session.userAccount.userAccountID}`)
+              .pipe(map((chessList) => {
+                return {
+                  chessList: chessList, 
+                  userAccountID: this.signInService?.session?.userAccount?.userAccountID
+                }
+              }))
+      } else {
+        return null;
+      }
+    }));
   }
   
-  public removeGame(gameToRemove: Game): void {
-    this.games = this.games.filter((game) => game.gameID !== gameToRemove.gameID)
+  public forfeitGame(gameToForfeit: Chess) {
+    let userToForfeit = this.signInService.session.userAccount.userAccountID;
+
+    return this.http.put<Chess>(`${this.apiUrl}/chess/forfeit/${userToForfeit}/${gameToForfeit.chessID}`, null);
+  }
+
+
+  public deleteGame(gameToRemove: Chess) {
+    return this.http.delete(`${this.apiUrl}/chess/delete/${gameToRemove.chessID}`);
   }
 }
-
-
-export interface Game {
-  gameID: number;
-  dateStarted: string;
-  dateLatest: string;
-  opponent: string;
-  status: Status;
-}
-
-export enum Status {
-  ACTIVE,
-  LOST,
-  WON
-} 

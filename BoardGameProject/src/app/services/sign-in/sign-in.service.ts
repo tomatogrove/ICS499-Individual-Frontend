@@ -22,6 +22,9 @@ export class SignInService {
   ) { }
 
   public echo(): Observable<Session> {
+    if (this.session.userAccount) {
+      return of(this.session);
+    }
     if (document.cookie.includes("key")) {
       let key = document.cookie.split(";")[0].split("=")[1];
       console.log(key);
@@ -32,6 +35,7 @@ export class SignInService {
           this.signedIn = true;
           this.session = session;
           console.log("the session has started", session);
+          return session;
         } 
         return null;
       }))

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { Board } from '../models/board';
 import { Piece } from '../models/piece';
 import { Space } from '../models/space';
@@ -60,7 +60,6 @@ export class ChessBoardComponent implements OnChanges {
   
       if (selectedPiece.color === this.playerColor) {
         let data: string = `${this.signInService.getSessionFromCookie()},${selectedPiece.pieceID},${space.x},${space.y}`;
-    
         this.socket.emit("movePiece", data);
       }
     }

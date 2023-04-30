@@ -8,6 +8,7 @@ export class Space {
     public board: ChessBoardComponent;
     public piece: Piece;
     public possibleMove: boolean;
+    public occupied: boolean;
   
     constructor(spaceID: number, x: number, y: number, board: ChessBoardComponent, piece: Piece) {
       this.spaceID = spaceID;

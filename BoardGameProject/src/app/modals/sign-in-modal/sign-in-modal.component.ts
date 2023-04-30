@@ -71,7 +71,8 @@ export class SignInModalComponent {
         username: this.signUpForm.get("username").value,
         email: this.signUpForm.get("email").value,
         password: this.signUpForm.get("password").value,
-        session: null
+        session: null,
+        chessList: []
       }).subscribe((user) => {
         this.errorCode = user.userAccountID;
 
@@ -129,6 +130,6 @@ export class SignInModalComponent {
 
   private navAway() {
     this.errorCode = 0;
-    this.activeModal.close(); 
+    this.activeModal.close(this.signInService.signedIn); 
   }
 }

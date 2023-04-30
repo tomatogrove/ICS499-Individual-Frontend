@@ -3,7 +3,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { SignInModalComponent } from '../modals/sign-in-modal/sign-in-modal.component';
-import { Subscription } from 'rxjs';
+import { Subscription, of, switchMap } from 'rxjs';
+import { JoinGameModalComponent } from '../modals/join-game-modal/join-game-modal.component';
 
 @Component({
   selector: 'app-home-screen',
@@ -13,14 +14,14 @@ import { Subscription } from 'rxjs';
 export class HomeScreenComponent implements OnInit, OnDestroy {
 
   public showSignInModal: boolean = false;
-  private subscription: Subscription;
+  private subscriptions: Subscription[];
 
   constructor(
     private signInService: SignInService, 
     private router: Router,
     private modalService: NgbModal
   ) { 
-    this.subscription = new Subscription();
+    this.subscriptions = [];
   }
 
   public ngOnInit(): void {
@@ -28,18 +29,42 @@ export class HomeScreenComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
+    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
   }
 
-  public selectChess(): void {
+  public newGame(): void {
     if (!this.signInService.signedIn) {
       const modalRef = this.modalService.open(SignInModalComponent, { centered: true });
-      this.subscription = modalRef.closed.subscribe(() => {
+      this.subscriptions.push(modalRef.closed.subscribe(() => {
         this.router.navigate(['game']);
-        this.subscription.unsubscribe();
-      });
+      }));
     } else {
       this.router.navigate(['game']);
+    }
+  }
+
+  public joinGame(): void {
+    if (!this.signInService.signedIn) {
+      let modalRef = this.modalService.open(SignInModalComponent, { centered: true });
+
+      this.subscriptions.push(modalRef.closed.pipe(switchMap((signedIn: boolean) => {
+        if (signedIn) {
+          modalRef = this.modalService.open(JoinGameModalComponent, { centered: true});
+          return modalRef.closed;
+        }
+        return of(null);
+      })).subscribe((chessID) => {
+        if (chessID) {
+          this.router.navigate([`game/${chessID}`]);
+        }
+      }))
+    } else {
+      const modalRef = this.modalService.open(JoinGameModalComponent, { centered: true});
+      this.subscriptions.push(modalRef.closed.subscribe((chessID) => {
+        if (chessID) {
+          this.router.navigate([`game/${chessID}`]);
+        }
+      }))
     }
   }
 }

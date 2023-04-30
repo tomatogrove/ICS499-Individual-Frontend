@@ -23,7 +23,11 @@ export class AppComponent {
   }
 
   public ngOnInit() {
-    this.signInService.echo().subscribe();
+    this.subscription.add(this.signInService.echo().subscribe());
+  }
+
+  public ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   public signIn(): void {

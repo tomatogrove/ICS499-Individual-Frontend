@@ -18,6 +18,7 @@ import { CancelGameModalComponent } from './modals/cancel-game-modal/cancel-game
 import { SignOutModalComponent } from './modals/sign-out-modal/sign-out-modal.component';
 import { AlertModalComponent } from './modals/server-alert-modal/alert-modal.component';
 import { PauseGameModalComponent } from './modals/pause-game-modal/pause-game-modal.component';
+import { JoinGameModalComponent } from './modals/join-game-modal/join-game-modal.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { PauseGameModalComponent } from './modals/pause-game-modal/pause-game-mo
     SignOutModalComponent,
     AlertModalComponent,
     PauseGameModalComponent,
+    JoinGameModalComponent
   ],
   imports: [
     FormsModule,

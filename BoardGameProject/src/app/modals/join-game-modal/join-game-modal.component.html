@@ -1,0 +1,29 @@
+<div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">Enter a Chess Game to Join</h5>
+    </div>
+    <div class="modal-body">
+        <form class="form-group p-2" [formGroup]="form">
+            <label for="url">Game's Url:</label>
+            <input 
+                id="url"  
+                name="url"
+                class="form-control" 
+                type="text"
+                formControlName="url"
+                [ngClass]="{ 'error-border': form.get('url').errors && form.get('url').touched }"
+                >
+            <div *ngIf="form.get('url')?.errors && form.get('url').errors['required'] && form.get('url').touched" class="error">
+            A url is required
+            </div>
+            <div 
+            *ngIf="form.get('url')?.errors && form.get('url').errors['invalidUrl'] && form.get('url').touched"
+            class="error">
+            The url is invalid
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="button button-text pb-0" (click)="joinGame()">Join</button>
+    </div>
+</div>
