@@ -57,7 +57,7 @@
     width: 32rem;
     border: 1px solid #c2bec5;
     border-radius: 5px;
-    margin: 0 3.25rem;
+    margin-left: 3.25rem;
     height: 35.5rem;
 }
 
@@ -102,6 +102,90 @@
     border-top: 1px solid #c2bec5;
 }
 
+@media (max-width: 1000px) {
+    .navigation-options {
+        width: 13rem;
+        padding-right: 1.5rem;
+        border-top: none;
+        flex-direction: column;
+    }
+
+    .navigation-options.pregame {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        align-content: center;
+    }
+
+    .room-link {
+        border: none;
+    }
+
+    .pieces-navigation {
+        align-items: center;
+        justify-content: center;
+    }
+
+    .pieces {
+        flex-direction: column;
+        width: 15rem;
+    }
+
+    .pieces.pregame {
+        flex-direction: row;
+        width: 20rem;
+    }
+
+    .smaller-card {
+        width: 10rem;
+        height: 10rem;
+        margin: 1rem;
+        margin-top: 0;
+    }
+
+    .smaller-card.pregame {
+        width: 12rem;
+        padding: 0 2rem;
+    }
+
+    .button {
+        width: 10rem;
+    }
+
+    .text-box {
+        width: 35rem;
+        height: 90%;
+        margin: 0 0 0 1rem;
+    }
+
+    .text-box.pregame {
+        height: 10.5rem;
+        width: 32rem;
+        margin-bottom: .5rem;
+    }
+
+    body {
+        padding-bottom: 0;
+        margin-bottom: 0;
+    }
+
+    .link-text-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .info-box {
+        flex-direction: row;
+        width: 55rem;
+        height: 15rem;
+        margin-left: 0;
+        margin: .5rem 0;
+        justify-content: space-evenly;
+    }
+}
+
 .button {
     width: 100%;
 }
@@ -141,4 +225,19 @@
     margin: 3px;
 	border-radius: 10px;
 	background-color: #ad99c3;
+}
+
+
+.padding {
+    padding-left: .75rem;
+}
+
+.flex {
+    margin-right: 0;
+}
+
+@media (max-width: 1000px) {
+    .flex {
+        flex-direction: column;
+    }
 }

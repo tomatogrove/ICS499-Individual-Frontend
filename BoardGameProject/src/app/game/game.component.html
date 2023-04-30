@@ -1,28 +1,32 @@
 <div *ngIf="!gameReady" class="flex justify-evenly">
     <app-chess-board [gameReady]="gameReady" [board]="chess?.board"></app-chess-board>
     <div class="info-box">
-        <div class="room-link">
-            <label>Room Link:</label>
-            <input readonly type="text" value="{{link}}" class="links">
-            <button class="copy-button" (click)="copyButton()">copy</button>
-        </div>
-        <div class="card text-box pregame scroll">
-            <ng-container *ngFor="let text of textHistory">
-                <label class="log">{{text}}</label>
-            </ng-container>
-        </div>
-        <div class="pieces">
-            <div class="card white-piece smaller-card pregame" [ngClass]="{ 'smaller-card-no-player': !chess?.whitePlayer }">
-                <img class="card-img-top" src="../../assets/images/whitepiece.png" alt="White Chess Piece">
-                <div>{{chess?.whitePlayer?.username}}</div>
+        <div class="link-text-box">
+            <div class="room-link">
+                <label>Room Link:</label>
+                <input readonly type="text" value="{{link}}" class="links">
+                <button class="copy-button" (click)="copyButton()">copy</button>
             </div>
-            <div class="card black-piece smaller-card pregame" [ngClass]="{'smaller-card-no-player': !chess?.blackPlayer}">
-                <img class="card-img-top" src="../../assets/images/blackpiece.png" alt="Black Chess Piece">
-                <div>{{chess?.blackPlayer?.username}}</div>
+            <div class="card text-box pregame scroll">
+                <ng-container *ngFor="let text of textHistory">
+                    <label class="log">{{text}}</label>
+                </ng-container>
             </div>
         </div>
-        <div class="navigation-options">
-            <button class="button button-text" (click)="cancel()">Cancel</button>
+        <div class="pieces-navigation">
+            <div class="pieces pregame">
+                <div class="card white-piece smaller-card pregame" [ngClass]="{ 'smaller-card-no-player': !chess?.whitePlayer }">
+                    <img class="card-img-top" src="../../assets/images/whitepiece.png" alt="White Chess Piece">
+                    <div>{{chess?.whitePlayer?.username}}</div>
+                </div>
+                <div class="card black-piece smaller-card pregame" [ngClass]="{'smaller-card-no-player': !chess?.blackPlayer}">
+                    <img class="card-img-top" src="../../assets/images/blackpiece.png" alt="Black Chess Piece">
+                    <div>{{chess?.blackPlayer?.username}}</div>
+                </div>
+            </div>
+            <div class="navigation-options pregame">
+                <button class="button button-text" (click)="cancel()">Cancel</button>
+            </div>
         </div>
     </div>
 </div>
@@ -41,7 +45,7 @@
             </ng-container>
         </div>
         <div class="pieces">
-            <h3>Current Turn: </h3>
+            <h3 class="padding">Current Turn: </h3>
             <div *ngIf="!canMove && chess === null" class="card smaller-card smaller-card-no-player">
                 <img class="card-img-top" src="../../assets/images/nopiece.png" alt="Empty Chess Piece">
                 <div>...</div>
