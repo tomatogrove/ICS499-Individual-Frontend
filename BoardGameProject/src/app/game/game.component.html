@@ -12,13 +12,13 @@
             </ng-container>
         </div>
         <div class="pieces">
-            <div class="card white-piece smaller-card pregame" [ngClass]="{ 'smaller-card-no-player': player1 === '...' }">
+            <div class="card white-piece smaller-card pregame" [ngClass]="{ 'smaller-card-no-player': !chess?.whitePlayer }">
                 <img class="card-img-top" src="../../assets/images/whitepiece.png" alt="White Chess Piece">
-                <div>{{player1}}</div>
+                <div>{{chess?.whitePlayer?.username}}</div>
             </div>
-            <div class="card black-piece smaller-card pregame" [ngClass]="{'smaller-card-no-player': player2 === '...'}">
+            <div class="card black-piece smaller-card pregame" [ngClass]="{'smaller-card-no-player': !chess?.blackPlayer}">
                 <img class="card-img-top" src="../../assets/images/blackpiece.png" alt="Black Chess Piece">
-                <div>{{player2}}</div>
+                <div>{{chess?.blackPlayer?.username}}</div>
             </div>
         </div>
         <div class="navigation-options">
@@ -28,7 +28,12 @@
 </div>
 
 <div *ngIf="gameReady" class="flex">
-    <app-chess-board [gameReady]="gameReady" [board]="chess.board" [socket]="socket" [canMove]="canMove" [playerColor]="playerColor"></app-chess-board>
+    <app-chess-board 
+        [gameReady]="gameReady" 
+        [board]="chess.board" 
+        [socket]="socket" 
+        [canMove]="canMove" 
+        [playerColor]="playerColor"></app-chess-board>
     <div class="info-box">
         <div class="card text-box scroll">
             <ng-container *ngFor="let text of textHistory">
@@ -41,11 +46,11 @@
                 <img class="card-img-top" src="../../assets/images/nopiece.png" alt="Empty Chess Piece">
                 <div>...</div>
             </div>
-            <div *ngIf="canMove" class="card white-piece smaller-card">
+            <div *ngIf="canMoveColor == 'WHITE'" class="card white-piece smaller-card">
                 <img class="card-img-top" src="../../assets/images/whitepiece.png" alt="White Chess Piece">
                 <div>{{chess?.whitePlayer?.username}}</div>
             </div>
-            <div *ngIf="!canMove" class="card black-piece smaller-card">
+            <div *ngIf="canMoveColor == 'BLACK'" class="card black-piece smaller-card">
                 <img class="card-img-top" src="../../assets/images/blackpiece.png" alt="Black Chess Piece">
                 <div>{{chess?.blackPlayer?.username}}</div>
             </div>
