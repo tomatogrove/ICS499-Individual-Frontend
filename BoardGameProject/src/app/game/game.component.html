@@ -35,7 +35,7 @@
         [canMove]="canMove" 
         [playerColor]="playerColor"></app-chess-board>
     <div class="info-box">
-        <div class="card text-box scroll">
+        <div #textBox class="card text-box scroll">
             <ng-container *ngFor="let text of textHistory">
                 <label class="log">{{text}}</label>
             </ng-container>

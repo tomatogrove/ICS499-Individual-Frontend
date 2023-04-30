@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as io from 'socket.io-client';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -19,6 +19,9 @@ import { Space } from '../models/space';
   styleUrls: ['./game.component.css']
 })
 export class GameComponent {
+  @ViewChild("textBox")
+  public textBoxElement: ElementRef<HTMLDivElement>;
+
   public link: string = "";
   
   private subscriptions: Subscription[];
@@ -61,11 +64,9 @@ export class GameComponent {
   }
 
   public ngOnDestroy() {
-    console.log("onDestroy");
     this.subscriptions.forEach((subscription) => subscription.unsubscribe());
     if (!this.hasLeft) {
-      let sessionID = this.signInService.getSessionFromCookie()
-      this.socket.emit("leaveGame", `${sessionID},${this.chessID}`);
+      this.socket.emit("leaveGame", `${this.chessID}`);
       this.socket.disconnect();
     }
   }
@@ -117,12 +118,13 @@ export class GameComponent {
     });
 
     this.socket.on("onGameReady", (response) => {
+      history.replaceState(null, "", `http://localhost:4200/game/${response.chessID}`)
       this.chess = response;
       this.gameReady = true;
-      if (this.signInService.session.userAccount.userAccountID === this.chess.whitePlayerID) {
-        this.canMove = true;
-      }
-      this.canMoveColor = "WHITE";
+
+      this.canMoveColor = this.chess.currentTurn === "WHITE" ? "WHITE" : "BLACK";
+      this.canMove = this.canMoveColor === this.playerColor;
+
       console.log(this.chess);
       this.sendToChat(this.chess.whitePlayer.username + " has joined as the White Player");
       this.sendToChat(this.chess.blackPlayer.username + " has joined as the Black Player");
@@ -132,23 +134,15 @@ export class GameComponent {
     this.socket.on("onNextTurnWhite", response => {
       this.sendToChat(this.formatMoveForChat(this.findMovedPiece(response)));
       this.chess = response;
-      if (this.signInService.session.userAccount.userAccountID === this.chess.whitePlayerID) {
-        this.canMove = true;
-      } else {
-        this.canMove = false;
-      }
-      this.canMoveColor = "WHITE";
+      this.canMoveColor = this.chess.currentTurn === "WHITE" ? "WHITE" : "BLACK";
+      this.canMove = this.canMoveColor === this.playerColor;
     }); 
 
     this.socket.on("onNextTurnBlack", response => {
       this.sendToChat(this.formatMoveForChat(this.findMovedPiece(response)));
       this.chess = response;
-      if (this.signInService.session.userAccount.userAccountID === this.chess.blackPlayer.userAccountID) {
-        this.canMove = true;
-      } else {
-        this.canMove = false;
-      }
-      this.canMoveColor = "BLACK";
+      this.canMoveColor = this.chess.currentTurn === "WHITE" ? "WHITE" : "BLACK";
+      this.canMove = this.canMoveColor === this.playerColor;
     });
 
     this.socket.on("onGameEnd", (response: string) => {
@@ -175,10 +169,10 @@ export class GameComponent {
       
     })
 
-    this.socket.on("onLeaveGame", (userID) => {
+    this.socket.on("onLeaveGame", () => {
       console.log("close room");
       this.canMove = false;
-      if (userID !== this.signInService.session.userAccount.userAccountID) {
+      // if (userID !== this.signInService.session.userAccount.userAccountID) {
         const modalRef = this.modalService.open(AlertModalComponent, { centered: true });
         modalRef.componentInstance.title = "Game Interrupted";
         modalRef.componentInstance.text = 
@@ -186,7 +180,7 @@ export class GameComponent {
         this.subscriptions.push(modalRef.closed.subscribe(() => {
           this.router.navigate(["/home"]);
         }));
-      }
+      // }
     })
   }
 
@@ -245,6 +239,10 @@ export class GameComponent {
 
   private sendToChat(chat: string) {
     this.textHistory.push(chat);
+    setTimeout(() => {
+      this.textBoxElement.nativeElement.scrollTop = this.textBoxElement.nativeElement.scrollHeight;
+    }, 0);
+    
   }
 
   private findMovedPiece(game: Chess): Space {
