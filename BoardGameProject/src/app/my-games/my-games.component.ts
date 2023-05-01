@@ -27,19 +27,27 @@ export class MyGamesComponent {
 
   public ngOnInit() {
     this.subscriptions.push(this.signInService.echo().subscribe(((session) => {
-      this.username = session.userAccount.username
-      console.log("stats component", this.username)
+      if (!session) {
+        this.router.navigate(['home']);
+      } else {
+        this.username = session.userAccount.username
+        console.log("stats component", this.username)
+      }
     })));
 
     this.subscriptions.push(this.userDataService.getUserGames().subscribe((gamesAndUserID) => {
-      this.playerGames = gamesAndUserID.chessList.filter((game) => game.status === "ACTIVE" && game.blackPlayer)
-        .map((game) => {
-          let isUserWhitePlayer = game.whitePlayer.userAccountID === this.signInService.session.userAccount.userAccountID
-          return {
-            ...game,
-            opponent: isUserWhitePlayer ? game.blackPlayer.username : game.whitePlayer.username
-          }
-        });
+      if (!gamesAndUserID) {
+        this.router.navigate(['home']);
+      } else {
+        this.playerGames = gamesAndUserID.chessList.filter((game) => game.status === "ACTIVE" && game.blackPlayer)
+          .map((game) => {
+            let isUserWhitePlayer = game.whitePlayer.userAccountID === this.signInService.session.userAccount.userAccountID
+            return {
+              ...game,
+              opponent: isUserWhitePlayer ? game.blackPlayer.username : game.whitePlayer.username
+            }
+          });
+      }
     }));
   }
 

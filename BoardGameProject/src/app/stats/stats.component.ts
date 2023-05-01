@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { UserDataService } from '../services/user/user-data.service';
 import { SignInService } from '../services/sign-in/sign-in.service';
 import { Subscription, map, switchMap } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-stats',
@@ -18,16 +19,24 @@ export class StatsComponent {
 
   constructor(
     public userDataService: UserDataService,
-    public signInService: SignInService
+    public signInService: SignInService,
+    public router: Router
   ) {}
 
   public ngOnInit() {
     this.subscription.push(this.signInService.echo().subscribe(((session) => {
-      this.username = session.userAccount.username
-      console.log("stats component", this.username)
+      if (!session) {
+        this.router.navigate(['home']);
+      } else {
+        this.username = session.userAccount.username
+        console.log("stats component", this.username)
+      }
     })));
 
     this.subscription.push(this.userDataService.getUserGames().subscribe((gamesAndUserID) => {
+      if (!gamesAndUserID) {
+        this.router.navigate(['home']);
+      } else {
         if (gamesAndUserID && gamesAndUserID.chessList.length > 0) {
           gamesAndUserID.chessList.forEach((game) => {
             if (game.blackPlayer && game.whitePlayer) {
@@ -44,6 +53,7 @@ export class StatsComponent {
           })
         }
         this.loading = false;
+      }
       })
     );
   }
