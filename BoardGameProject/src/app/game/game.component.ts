@@ -10,7 +10,6 @@ import { ForfeitGameModalComponent } from '../modals/forfeit-game-modal/forfeit-
 import { AlertModalComponent } from '../modals/server-alert-modal/alert-modal.component';
 import { PauseGameModalComponent } from '../modals/pause-game-modal/pause-game-modal.component';
 import { CancelGameModalComponent } from '../modals/cancel-game-modal/cancel-game-modal.component';
-import { Piece } from '../models/piece';
 import { Space } from '../models/space';
 
 @Component({
@@ -42,7 +41,6 @@ export class GameComponent {
   public playerColor: string;
 
   private boardLetters: string = "abcdefgh";
-  private pieceMove: string;
 
   constructor(
     private signInService: SignInService,
