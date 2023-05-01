@@ -36,7 +36,6 @@ export class ChessBoardComponent implements OnChanges {
   }
 
   public showPossibleMoves(space: Space) {
-    console.log("can move: ", this.canMove);
     if (this.canMove) {
       this.spaces.forEach((row) => row.forEach((space) => space.possibleMove = false));
       

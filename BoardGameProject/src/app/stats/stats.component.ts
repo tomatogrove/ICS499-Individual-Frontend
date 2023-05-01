@@ -28,8 +28,7 @@ export class StatsComponent {
       if (!session) {
         this.router.navigate(['home']);
       } else {
-        this.username = session.userAccount.username
-        console.log("stats component", this.username)
+        this.username = session.userAccount.username;
       }
     })));
 

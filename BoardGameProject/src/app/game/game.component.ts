@@ -78,8 +78,6 @@ export class GameComponent {
 
   private setUpSocketEvents(): void {
     this.socket.on("connect", () => {
-        console.log("Connected to server");
-
         let sessionID: string = this.signInService.getSessionFromCookie() || "-1";
         if (!this.signInService.signedIn && sessionID === "-1") {
           this.openSignInModal(sessionID);
@@ -96,7 +94,6 @@ export class GameComponent {
       this.chess = response;
       this.link += this.chessID === -1 ? `/${response.chessID}` : "";
       this.chessID = response.chessID;
-      console.log(this.chess);
       if (this.signInService.session.userAccount.userAccountID === this.chess.whitePlayerID) {
         this.playerColor = "WHITE";
       } else {
@@ -124,8 +121,7 @@ export class GameComponent {
 
       this.canMoveColor = this.chess.currentTurn === "WHITE" ? "WHITE" : "BLACK";
       this.canMove = this.canMoveColor === this.playerColor;
-
-      console.log(this.chess);
+      
       this.sendToChat(this.chess.whitePlayer.username + " has joined as the White Player");
       this.sendToChat(this.chess.blackPlayer.username + " has joined as the Black Player");
       this.sendToChat("The game is ready to play!");
@@ -172,17 +168,14 @@ export class GameComponent {
     })
 
     this.socket.on("onLeaveGame", () => {
-      console.log("close room");
       this.canMove = false;
-      // if (userID !== this.signInService.session.userAccount.userAccountID) {
-        const modalRef = this.modalService.open(AlertModalComponent, { centered: true });
-        modalRef.componentInstance.title = "Game Interrupted";
-        modalRef.componentInstance.text = 
-          "Your opponent has left the game.\nThe game has been saved and you will be sent to the home screen.\nHave everyone rejoin to continue the game.";
-        this.subscriptions.push(modalRef.closed.subscribe(() => {
-          this.router.navigate(["/home"]);
-        }));
-      // }
+      const modalRef = this.modalService.open(AlertModalComponent, { centered: true });
+      modalRef.componentInstance.title = "Game Interrupted";
+      modalRef.componentInstance.text = 
+        "Your opponent has left the game.\nThe game has been saved and you will be sent to the home screen.\nHave everyone rejoin to continue the game.";
+      this.subscriptions.push(modalRef.closed.subscribe(() => {
+        this.router.navigate(["/home"]);
+      }));
     })
   }
 
@@ -196,7 +189,6 @@ export class GameComponent {
   }
 
   public pauseMatch() {
-    console.log("pausing match");
     const modalRef = this.modalService.open(PauseGameModalComponent, { centered: true });
     this.subscriptions.push(modalRef.closed.subscribe((leave?: boolean) => {
       if (leave) {
@@ -206,7 +198,6 @@ export class GameComponent {
   }
   
   public forfeit() {
-    console.log("forfeiting match", this.chessID)
     let sessionID = this.signInService.getSessionFromCookie();
     const modalRef = this.modalService.open(ForfeitGameModalComponent, { centered: true });
     this.subscriptions.push(modalRef.closed.subscribe((forfeit?: boolean) => {
