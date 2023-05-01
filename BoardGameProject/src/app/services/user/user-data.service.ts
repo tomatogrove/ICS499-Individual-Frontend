@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { SignInService } from '../sign-in/sign-in.service';
 import { Chess } from 'src/app/models/chess';
 import { UserAccount } from 'src/app/models/user-account';
-import { Observable, map, switchMap } from 'rxjs';
+import { Observable, map, of, switchMap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
@@ -28,7 +28,7 @@ export class UserDataService {
                 }
               }))
       } else {
-        return null;
+        return of(null);
       }
     }));
   }

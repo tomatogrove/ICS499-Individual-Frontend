@@ -7,28 +7,12 @@
   <body>
     <header>
       <nav>
-        <button class="navigation-button navigation-button-text" (click)="visitHome()">Games</button>
-        <button class="navigation-button navigation-button-text" (click)="visitGames()">My Games</button>
-        <button class="navigation-button navigation-button-text" (click)="visitMyGames()">My Stats</button>
-        <button 
-          *ngIf="!signInService.signedIn" class="navigation-button navigation-button-text align-right" (click)="signIn()">Sign In</button>
-        <button 
-          *ngIf="signInService.signedIn" class="navigation-button navigation-button-text align-right" (click)="signOut()">Log Out
-        </button>
-        <!-- <div class="dropdown align-right">
-          <button 
-            id="loggedInButton"
-            *ngIf="signInService.signedIn" 
-            class="navigation-button navigation-button-text" 
-            role="button" 
-            type="button"
-          >{{signInService.signInText}}</button>
-          <div class="dropdown-content" aria-labelledby="loggedInButton">
-            <a class="">Action</a>
-            <a class="">Another action</a>
-            <a class="">Something else here</a>
-          </div>
-        </div> -->
+        <button class="navigation-button navigation-button-text" (click)="visitHome()">Home</button>
+        <button *ngIf="signInService.signedIn" class="navigation-button navigation-button-text" (click)="visitGames()">My Games</button>
+        <button *ngIf="signInService.signedIn" class="navigation-button navigation-button-text" (click)="visitMyGames()">My Stats</button>
+        <button *ngIf="!signInService.signedIn" class="navigation-button navigation-button-text align-right" (click)="signIn()">Sign In</button>
+        <button *ngIf="signInService.signedIn" class="navigation-button navigation-button-text align-right" (click)="signOut()">Log Out</button>
+        <button *ngIf="signInService.signedIn" class="username username-text align-right">Hello, {{signInService.session.userAccount.username}}!</button>
       </nav>
     </header>
     <main>
