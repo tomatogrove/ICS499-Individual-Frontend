@@ -42,7 +42,7 @@ export class ChessBoardComponent implements OnChanges {
       if (this.getSelectedPiece() !== space.piece) {
         if (space.piece.color === this.playerColor) {
           this.gameService.getPossibleMoves(space.piece.pieceID).subscribe((possibleMoves) => {
-            if(!possibleMoves) { return; }
+            if (!possibleMoves) { return; }
             possibleMoves.forEach((move) => {
               this.reverseForBlack();
               this.spaces[8 - move.y][move.x - 1].possibleMove = true;

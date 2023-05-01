@@ -150,7 +150,7 @@ export class GameComponent {
         let user = this.signInService.session.userAccount;
 
         title = user.username !== response ? "Congratulations" : "Game Ended";
-        text = user.username !== response ? `Congratulations ${response} you have won the match!` : `${response} has won the match`;
+        text = user.username !== response ? `Congratulations ${user.username}, you have won the match!` : `${response} has won the match`;
         text += "\nYou will be brought to your stats"
 
       }
